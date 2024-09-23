@@ -1,81 +1,205 @@
-// import { useContext } from "react";
-// import styled from "styled-components";
-// import Quantity from "../ui/Quantity";
-// import { CartContext } from "../hooks/CartProviderHook";
+import { useContext } from "react";
+// import { useState, useEffect, useContext } from "react";
+import { CartContext } from "../contexts/CartContext";
+import PropTypes, { object } from "prop-types";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { NavLink } from "react-router-dom";
+import {} from "@heroicons/react/24/outline";
+import { Spinner } from "react-bootstrap";
 
-// const StyledCard = styled.div`
-//   /* display: grid; */
-//   background-color: #ffffff10;
-//   border-radius: 10px;
-//   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-//   margin: auto;
-//   text-align: center;
-// `;
+// import Cart from "./Cart";
 
-// const Img = styled.img`
-//   width: auto;
-//   height: auto;
-//   border-radius: 5%;
-// `;
+export default function MenuCard({ data, error, isLoading }) {
+  // const [menus, setMenus] = useState([]);
+  const { cartItems, addToCart, removeFromCart } = useContext(CartContext);
+  // const [showModal, setShowModal] = useState(false);
 
-// const H3 = styled.h3`
-//   margin: 0;
-//   /* padding: 5px; */
-//   background-color: #343a40;
-//   color: #fff;
-// `;
+  // const toggle = () => {
+  //   setShowModal(!showModal);
+  // };
 
-// const P = styled.p`
-//   padding: 15px;
-//   margin: 0;
-//   color: #ffffffa0;
-// `;
+  // async function getMenus() {
+  //   // const response = await fetch("http://127.0.0.1:5001/api/menus"); // fetch the menus
+  //   // "https://moray-large-vervet.ngrok-free.app/api/menus",
+  //   const response = await fetch("http://127.0.0.1:5001/api/menus", {
+  //     method: "get",
+  //     headers: new Headers({
+  //       "ngrok-skip-browser-warning": "69420",
+  //     }),
+  //   }); // fetch the menus
+  //   const data = await response.json(); // convert the response to json
+  //   setMenus(data); // set the menus in the state to the menus we fetched
+  // }
 
-// const Price = styled.p`
-//   font-size: 1.5em;
-//   color: #28a745;
-//   margin: 15px 0;
-// `;
+  // useEffect(() => {
+  //   setMenus(data);
+  //   // getMenus();
+  // }, []);
 
-// // const Button = styled.button`
-// //   background-color: #1ce95dc4;
-// //   color: white;
-// //   border: none;
-// //   padding: 5px;
-// //   font-size: 16px;
-// //   cursor: pointer;
-// //   border-radius: 5px;
-// //   transition: background-color 0.3s ease;
+  const notifyAddedToCart = (item) =>
+    toast.success(`1 ${item.name} added to cart!`, {
+      position: "top-center",
+      autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "colored",
+      style: {
+        backgroundColor: "#05b858",
+        color: "#ffffff",
+      },
+    });
 
-// //   &:hover {
-// //     background-color: #1ce95d;
-// //   }
-// // `;
+  const allnotifyRemovedFromCart = (item) =>
+    toast.error(`All ${item.name} removed from cart!`, {
+      position: "top-center",
+      autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "colored",
+      style: {
+        backgroundColor: "#b9220e",
+        color: "#fff",
+      },
+    });
 
-// function MenuCard() {
-//   const { addToCart } = useContext(CartContext);
-//   return (
-//     <StyledCard>
-//       <Img src="src/assets/images/afang.png" alt="Dish Image" />
-//       <H3>Delicious Afang</H3>
-//       <P>
-//         A brief description of the dish goes here. It is tasty and delightful!
-//       </P>
-//       <Price>$12.99</Price>
-//       <br />
-//       <Quantity />
-//       <br />
-//       <button
-//         className="btn btn-primary"
-//         onClick={() => addToCart("product 1")}
-//       >
-//         Add to Cart
-//       </button>
-//       {/* <Button>Add to cart</Button> */}
-//       <br />
-//       <br />
-//     </StyledCard>
-//   );
-// }
+  const onenotifyRemovedFromCart = (item) =>
+    toast.error(`1 ${item.name} removed from cart!`, {
+      position: "top-center",
+      autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "colored",
+      style: {
+        backgroundColor: "#b9220e",
+        color: "#fff",
+      },
+    });
 
-// export default MenuCard;
+  const allhandleRemoveFromCart = (menu) => {
+    removeFromCart(menu);
+    allnotifyRemovedFromCart(menu);
+  };
+  const onehandleRemoveFromCart = (menu) => {
+    removeFromCart(menu);
+    onenotifyRemovedFromCart(menu);
+  };
+
+  if (isLoading)
+    return (
+      <div className=" container-fluid">
+        <Spinner />
+      </div>
+    );
+  if (error)
+    return <div className=" container-fluid">Error: {error.message}</div>;
+
+  return (
+    <div className=" container-fluid">
+      <ToastContainer />
+      <div className="flex justify-between items-center px-20">
+        <h1 className="text-2xl text-white uppercase font-bold mt-10 text-center mb-10">
+          Shop
+        </h1>
+        {/* {!showModal && (
+          <button
+            className="px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
+            onClick={toggle}
+          >
+            Cart ({cartItems.length})
+            </button>
+            )} */}
+        <nav className="navbar navbar-light badge">
+          <NavLink className="badge" to="/shoppingcart">
+            Cart ({cartItems.length})
+          </NavLink>
+        </nav>
+      </div>
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {data?.map((menu) => (
+          <div
+            key={menu.menu_id}
+            className="bg-white shadow-md justify-center items-center  rounded-lg px-10 py-10"
+          >
+            <div className="flex justify-center align-end">
+              <img
+                src={menu.menu_url}
+                alt={menu.name}
+                className="rounded-md w-75"
+              />
+            </div>
+            <div className="mt-4">
+              <h1 className="text-lg text-center uppercase font-bold">
+                {menu.name}
+              </h1>
+              <p className="mt-2 text-gray-600 text-sm">
+                {menu.description.slice(0, 120)}...
+              </p>
+              <p className="text-center mt-2 text-gray-600">₦{menu.price}</p>
+            </div>
+            <div className="mt-6 flex justify-center items-center">
+              {!cartItems.find((item) => item.menu_id === menu.menu_id) ? (
+                <button
+                  className="px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
+                  onClick={() => {
+                    addToCart(menu);
+                    notifyAddedToCart(menu);
+                  }}
+                >
+                  Add to cart
+                </button>
+              ) : (
+                <div className="flex gap-4">
+                  <button
+                    className="px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
+                    onClick={() => {
+                      addToCart(menu);
+                      notifyAddedToCart(menu);
+                    }}
+                  >
+                    +
+                  </button>
+                  <p className="text-gray-600">
+                    {
+                      cartItems.find((item) => item.menu_id === menu.menu_id)
+                        .quantity
+                    }
+                  </p>
+                  <button
+                    className="px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
+                    onClick={() => {
+                      const cartItem = cartItems.find(
+                        (item) => item.menu_id === menu.menu_id
+                      );
+                      if (cartItem.quantity === 1) {
+                        allhandleRemoveFromCart(menu);
+                      } else {
+                        onehandleRemoveFromCart(menu);
+                      }
+                    }}
+                  >
+                    -
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+      {/* <Cart showModal={showModal} toggle={toggle} /> */}
+    </div>
+  );
+}
+
+MenuCard.propTypes = {
+  data: PropTypes.arrayOf(object),
+  error: PropTypes.string,
+  isLoading: PropTypes.bool,
+};

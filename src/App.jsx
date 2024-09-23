@@ -8,9 +8,15 @@ import ShoppingCart from "./pages/ShoppingCart";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-import Login from "./pages/Login";
 import Services from "./pages/Services";
-import { CartProvider } from "./context/cart";
+import PrivateRoute from "./pages/PrivateRoute";
+import Checkout from "./pages/Checkout";
+import Admin from "./pages/Admin";
+import Logout from "./pages/Logout";
+import Signin from "./pages/Signin";
+import { CartProvider } from "./contexts/CartContext";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,20 +30,28 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools initialIsOpen={false} />
       <CartProvider>
         <GlobalStyles />
         <BrowserRouter>
-          <Routes>
-            <Route element={<AppLayout />}>
-              <Route index element={<Navigate replace to="home" />} />
-              <Route path="home" element={<Home />} />
-              <Route path="about" element={<About />} />
-              <Route path="contact" element={<Contact />} />
-              <Route path="login" element={<Login />} />
-              <Route path="services" element={<Services />} />
-              <Route path="shoppingcart" element={<ShoppingCart />} />
-            </Route>
-          </Routes>
+          <AuthProvider>
+            <Routes>
+              <Route element={<AppLayout />}>
+                <Route index element={<Navigate replace to="home" />} />
+                <Route path="home" element={<Home />} />
+                <Route path="about" element={<About />} />
+                <Route path="contact" element={<Contact />} />
+                <Route path="services" element={<Services />} />
+                <Route path="shoppingcart" element={<ShoppingCart />} />
+                <Route path="signin" element={<Signin />} />
+                <Route path="admin" element={<Admin />} />
+                <Route path="logout" element={<Logout />} />
+                <Route element={<PrivateRoute />}>
+                  <Route path="checkout" element={<Checkout />} />
+                </Route>
+              </Route>
+            </Routes>
+          </AuthProvider>
         </BrowserRouter>
       </CartProvider>
     </QueryClientProvider>

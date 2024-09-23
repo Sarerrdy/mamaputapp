@@ -62,35 +62,8 @@ import TopNavBar from "./TopNavBar";
 function AppLayout() {
   return (
     <div className="container-fluid" style={{ backgroundColor: `#4040405e` }}>
-      {/* <!-- Navigation Bar --> */}
-
-      {/* <div className="container">
-        <div className=" navbar text-white m-2">
-        <div className="row ms-5">
-        <div className="col">
-        <a href="#home">Home</a>
-        </div>
-        <div className="col">
-        <a href="#services">Services</a>
-            </div>
-          </div>
-          <div className="row me-5">
-            <div className=" col">
-              <a href="#about">Login</a>
-              </div>
-              <div className=" col">
-              <a href="#about">About</a>
-              </div>
-              <div className="col">
-              <a href="#contact">Contact</a>
-              </div>
-              </div>
-              </div>
-              </div> */}
-
-      {/* Header Banner */}
       <div className=" container">
-        <div className=" flex-column">
+        <div className="Navbar">
           <TopNavBar />
         </div>
         <div

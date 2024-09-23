@@ -1,7 +1,7 @@
 import { useContext } from "react";
 // import PropTypes from "prop-types";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { CartContext } from "../context/cart";
+import { CartContext } from "../contexts/CartContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
