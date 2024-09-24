@@ -4,8 +4,13 @@ import { useNavigate } from "react-router-dom";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("site") || "");
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("site_user")) || ""
+  );
+  const [token, setToken] = useState(localStorage.getItem("site_token") || "");
+  const [address, setAddress] = useState(
+    localStorage.getItem("site_address") || ""
+  );
   const navigate = useNavigate();
   const loginAction = async (data) => {
     try {
@@ -20,14 +25,27 @@ export const AuthProvider = ({ children }) => {
 
       let authToken = res[0];
       let authUser = res[1];
+      let authAdress =
+        res[2]["address"] +
+        ", " +
+        res[2]["landmark"] +
+        ", " +
+        res[2]["town"] +
+        ", " +
+        res[2]["lga"] +
+        ", " +
+        res[2]["state"];
 
-      // console.log("from authContext", authUser);
+      console.log("Address authContext", authAdress);
 
       if (authUser) {
         setUser(authUser);
         setToken(authToken);
-        localStorage.setItem("site", authToken);
-        navigate("/home");
+        setAddress(authAdress);
+        localStorage.setItem("site_user", JSON.stringify(authUser));
+        localStorage.setItem("site_address", JSON.stringify(authAdress));
+        localStorage.setItem("site_token", authToken);
+        navigate("/");
         return;
       }
       throw new Error(res.message);
@@ -37,14 +55,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logOut = () => {
-    setUser(null);
+    setUser("");
     setToken("");
-    localStorage.removeItem("site");
+    localStorage.removeItem("site_token");
+    localStorage.removeItem("site_user");
+    localStorage.removeItem("site_address");
     navigate("/signin");
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, loginAction, logOut }}>
+    <AuthContext.Provider value={{ token, user, address, loginAction, logOut }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 // import PropTypes from "prop-types";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { CartContext } from "../contexts/CartContext";
@@ -9,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 export default function Cart() {
   const { cartItems, addToCart, removeFromCart, clearCart, getCartTotal } =
     useContext(CartContext);
+  const navigate = useNavigate();
 
   const notifyRemovedFromCart = (item) =>
     toast.error(`${item.title} removed from cart!`, {
@@ -43,6 +45,10 @@ export default function Cart() {
   const handleRemoveFromCart = (menu) => {
     removeFromCart(menu);
     notifyRemovedFromCart(menu);
+  };
+
+  const navTo = () => {
+    navigate("/checkout");
   };
 
   return (
@@ -125,7 +131,12 @@ export default function Cart() {
         <h1 className="text-lg font-bold">Your cart is empty</h1>
       )}
 
-      <button className="px-8  py-2 bg-danger text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700">
+      <button
+        className="px-8  py-2 bg-danger text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
+        onClick={() => {
+          navTo();
+        }}
+      >
         check out
       </button>
     </div>

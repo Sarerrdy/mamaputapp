@@ -1,17 +1,14 @@
-// import { useEffect } from "react";
-import { useAuth } from "../contexts/AuthContext";
+// import React from 'react'
 
-const Checkout = () => {
-  const auth = useAuth();
-  console.log("auth setUser", auth);
+import Order from "../features/Order";
+
+export default function Checkout() {
   return (
-    <div className="container align-content-center mx-auto py-5 min-vh-100 h-100">
-      <div className="text-white text-6xl">
-        <h1>Welcome! {auth.user.first_name + " " + auth.user.last_name}</h1>
-        <h2>Please proceed to checkout..</h2>
+    <div className=" container min-vh-100 h-100">
+      <div className="text-white bg-black text-center mt-4">
+        <p className=" text-lg-center font-bold uppercase">Check Out Now!!</p>
       </div>
+      <Order />
     </div>
   );
-};
-
-export default Checkout;
+}
