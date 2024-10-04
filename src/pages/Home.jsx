@@ -43,7 +43,7 @@ import { useFetchData } from "../hooks/useApi";
 function Home() {
   const { data, error, isLoading } = useFetchData("menus");
   return (
-    <div className="container px-20 min-vh-100 h-100">
+    <div className="container bg-body-secondary px-20 min-vh-100">
       <MenuCard
         className=" w-4"
         data={data}

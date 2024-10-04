@@ -94,7 +94,7 @@ export default function MenuCard({ data, error, isLoading }) {
 
   if (isLoading)
     return (
-      <div className=" container-fluid">
+      <div className=" flex justify-between items-center px-20 m-7 mt-lg-5">
         <Spinner />
       </div>
     );
@@ -102,10 +102,10 @@ export default function MenuCard({ data, error, isLoading }) {
     return <div className=" container-fluid">Error: {error.message}</div>;
 
   return (
-    <div className=" container-fluid">
+    <div className=" container">
       <ToastContainer />
       <div className="flex justify-between items-center px-20">
-        <h1 className="text-2xl text-white uppercase font-bold mt-10 text-center mb-10">
+        <h1 className="text-2xl uppercase font-bold mt-10 text-center mb-10">
           Shop
         </h1>
         {/* {!showModal && (
@@ -117,7 +117,7 @@ export default function MenuCard({ data, error, isLoading }) {
             </button>
             )} */}
         <nav className="navbar navbar-light badge">
-          <NavLink className="badge" to="/shoppingcart">
+          <NavLink className="badge text-lg text-dark" to="/shoppingcart">
             Cart ({cartItems.length})
           </NavLink>
         </nav>

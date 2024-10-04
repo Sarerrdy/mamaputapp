@@ -91,7 +91,7 @@ function AppLayout() {
           </div>
         </div>
       </div>
-      <div className="container-fluid">
+      <div className="container min-vh-100">
         <Outlet />
       </div>
       <div className="container text-white align-bottom mt-4 pb-5">

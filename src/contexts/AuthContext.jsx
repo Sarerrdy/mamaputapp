@@ -12,47 +12,21 @@ export const AuthProvider = ({ children }) => {
     localStorage.getItem("site_address") || ""
   );
   const navigate = useNavigate();
-  const loginAction = async (data) => {
-    try {
-      const response = await fetch("http://127.0.0.1:5001/api/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      const res = await response.json();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-      let authToken = res[0];
-      let authUser = res[1];
-      let authAdress =
-        res[2]["address"] +
-        ", " +
-        res[2]["landmark"] +
-        ", " +
-        res[2]["town"] +
-        ", " +
-        res[2]["lga"] +
-        ", " +
-        res[2]["state"];
-
-      console.log("Address authContext", authAdress);
-
-      if (authUser) {
-        setUser(authUser);
-        setToken(authToken);
-        setAddress(authAdress);
-        localStorage.setItem("site_user", JSON.stringify(authUser));
-        localStorage.setItem("site_address", JSON.stringify(authAdress));
-        localStorage.setItem("site_token", authToken);
-        navigate("/");
-        return;
-      }
-      throw new Error(res.message);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // fetch function
+  async function fetchAction(data, endpoint) {
+    const response = await fetch("http://127.0.0.1:5001/api/" + endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const jsonResult = await response.json();
+    console.log("AUTH-JSON-RESPONSE", jsonResult);
+    return jsonResult;
+  }
 
   const logOut = () => {
     setUser("");
@@ -60,11 +34,25 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("site_token");
     localStorage.removeItem("site_user");
     localStorage.removeItem("site_address");
+    setIsAuthenticated(false);
     navigate("/signin");
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, address, loginAction, logOut }}>
+    <AuthContext.Provider
+      value={{
+        token,
+        setToken,
+        user,
+        setUser,
+        address,
+        setAddress,
+        fetchAction,
+        logOut,
+        isAuthenticated,
+        setIsAuthenticated,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

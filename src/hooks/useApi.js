@@ -1,30 +1,43 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '../services/apiClient';
+// import { OrderCtx } from "../contexts/OrderContext";
+
 
 // Fetch data
-export const useFetchData = (menus) => {
+export const useFetchData = (endpoint) => {
   return useQuery( {
-    queryKey:[menus],
+    queryKey:[endpoint],
     queryFn: async () => {
-    const { data } = (await apiClient.get(menus));
+    const { data } = (await apiClient.get(endpoint));
     console.log(data);
     return data;
   }});
 };
 
+
 // Create data
 export const useCreateData = (endpoint) => {
   const queryClient = useQueryClient();
+  // const { setOrderDetails } = OrderCtx();
+
   return useMutation(
-    async (newData) => {
-      const { data } = await apiClient.post(endpoint, newData);
-      return data.j;
-    },
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries([endpoint]);
+    // queryKey:[endpoint],
+    mutationFn: async (newData) => {      
+      const { data } = await apiClient.post(endpoint, newData);
+      return data;
+    },
+    
+      onSuccess: (data) => {
+       queryClient.invalidateQueries([endpoint]);
+       console.log("RETURN RES", data)      
+      //  setOrderDetails("data")
       },
+      onError: (error) => {
+        console.error('ERROR FROM useAPI MUTATION:', error);    
     }
+    }
+    
   );
 };
 

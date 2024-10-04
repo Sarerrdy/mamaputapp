@@ -9,13 +9,13 @@ import {
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 const navigation = [
   { name: "Home", href: "/home", current: true },
   { name: "Services", href: "/services", current: false },
   { name: "About", href: "/about", current: false },
   { name: "Contact", href: "/contact", current: false },
-  { name: "Checkout", href: "/checkout", current: false },
 ];
 
 function classNames(...classes) {
@@ -23,6 +23,7 @@ function classNames(...classes) {
 }
 
 export default function TopNavBar() {
+  const auth = useAuth();
   return (
     <Disclosure as="nav" className="bg-gray-800">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-4">
@@ -81,44 +82,77 @@ export default function TopNavBar() {
             </button>
 
             {/* Profile dropdown */}
-            <Menu as="div" className="relative ml-3">
-              <div>
-                <MenuButton className="relative flex rounded-full lg:text-xl md:text-lg text-base bg-gray-800 text-gray-200 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                  <span className="absolute -inset-1.5" />
-                  <span className="sr-only">Open user menu</span>
-                  Login | Sign-up
-                </MenuButton>
-              </div>
-              <MenuItems
-                transition
-                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
-              >
-                <MenuItem>
-                  <NavLink
-                    to="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
-                  >
-                    Your Profile
-                  </NavLink>
-                </MenuItem>
-                <MenuItem>
-                  <NavLink
-                    to="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
-                  >
-                    my orders
-                  </NavLink>
-                </MenuItem>
-                <MenuItem>
-                  <NavLink
-                    to="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
-                  >
-                    Sign out
-                  </NavLink>
-                </MenuItem>
-              </MenuItems>
-            </Menu>
+            {auth.isAuthenticated ? (
+              <Menu as="div" className="relative ml-3">
+                <div>
+                  <MenuButton className="relative flex rounded-full lg:text-xl md:text-lg text-base bg-gray-800 text-gray-200 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <span className="absolute -inset-1.5" />
+                    <span className="sr-only">Open user menu</span>
+                    profile
+                  </MenuButton>
+                </div>
+                <MenuItems
+                  transition
+                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                >
+                  <MenuItem>
+                    <NavLink
+                      to="/profile"
+                      className="block px-4 py-2 text-base text-gray-700 data-[focus]:bg-gray-100"
+                    >
+                      My Profile
+                    </NavLink>
+                  </MenuItem>
+                  <MenuItem>
+                    <NavLink
+                      to="#"
+                      className="block px-4 py-2 text-base text-gray-700 data-[focus]:bg-gray-100"
+                    >
+                      my orders
+                    </NavLink>
+                  </MenuItem>
+                  <MenuItem>
+                    <button
+                      className="block px-4 py-2 text-base text-gray-700 data-[focus]:bg-gray-100"
+                      onClick={() => auth.logOut()}
+                    >
+                      Sign out
+                    </button>
+                  </MenuItem>
+                </MenuItems>
+              </Menu>
+            ) : (
+              <Menu as="div" className="relative ml-3">
+                <div>
+                  <MenuButton className="relative flex rounded-full lg:text-xl md:text-lg text-base bg-gray-800 text-gray-200 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <span className="absolute -inset-1.5" />
+                    <span className="sr-only">Open user menu</span>
+                    Sign in
+                  </MenuButton>
+                </div>
+                <MenuItems
+                  transition
+                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                >
+                  <MenuItem>
+                    <NavLink
+                      to="/signin"
+                      className="block px-4 py-2 text-base text-gray-700 data-[focus]:bg-gray-100"
+                    >
+                      login
+                    </NavLink>
+                  </MenuItem>
+                  <MenuItem>
+                    <NavLink
+                      to="/register"
+                      className="block px-4 py-2 text-base text-gray-700 data-[focus]:bg-gray-100"
+                    >
+                      sign up
+                    </NavLink>
+                  </MenuItem>
+                </MenuItems>
+              </Menu>
+            )}
           </div>
         </div>
       </div>
