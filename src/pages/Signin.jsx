@@ -96,8 +96,7 @@ const LoginForm = () => {
         localStorage.setItem("site_token", authToken);
         auth.setIsAuthenticated(true);
         // navigate("/");
-        <Outlet />;
-        return;
+        return <Outlet />;
       }
       throw new Error(res.message);
     } catch (err) {
