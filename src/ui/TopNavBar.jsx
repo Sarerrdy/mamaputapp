@@ -47,7 +47,8 @@ export default function TopNavBar() {
             <div className="flex flex-shrink-0 items-center">
               <img
                 alt="Mama Put"
-                src="src/assets/images/mamaput_logo1.png"
+                // src="src/assets/images/mamaput_logo1.png"
+                src="./images/mamaput_logo1.png"
                 className="h-8 w-auto"
               />
             </div>

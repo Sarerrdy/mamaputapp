@@ -23,7 +23,7 @@ export default function OrderDetails(props) {
         <div className="flex justify-center mb-6">
           <img
             className="w-24 h-24"
-            src="src/assets/images/Tick.png"
+            src="./images/Tick.png"
             alt="Success Tick"
           />
         </div>

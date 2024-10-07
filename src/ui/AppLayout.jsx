@@ -69,7 +69,8 @@ function AppLayout() {
         <div
           className="bg-cover text-center"
           style={{
-            backgroundImage: `url("src/assets/images/home_banner_balck.jpg")`,
+            backgroundImage: `url("/images/home_banner_balck.jpg")`,
+            // backgroundImage: `url("src/assets/images/home_banner_balck.jpg")`,
             height: `25rem`,
           }}
         >
