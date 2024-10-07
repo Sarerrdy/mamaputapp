@@ -1,20 +1,34 @@
 import { useContext, useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // import PropTypes from "prop-types";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { CartContext } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
+import { useCreateData1 } from "../hooks/useApi";
 import { OrderCtx } from "../contexts/OrderContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import OrderDetails from "./OrderDetails";
+import { useFetchData } from "../hooks/useApi";
 
 export default function Order() {
-  const { cartItems, getCartTotal } = useContext(CartContext);
+  const { cartItems, getCartTotal, getfetchToken, setGetFetchToken } =
+    useContext(CartContext);
   const [disable, setDisable] = useState(false);
   const hasExecuted = useRef(false);
   const auth = useAuth();
-  const { postOrder, returnedOrderDetails } = OrderCtx();
+  const [orderPlacedId, setOrderPlacedId] = useState(null);
+  const navigate = useNavigate();
+  //get order_details
+  const { data: orderDetailsData } = useFetchData(
+    `orderdetails?order_id=${orderPlacedId}`
+  );
+  const { data: verifyToken } = useFetchData(
+    `orders?checkerToken=${getfetchToken}`
+  );
+  const { mutateAsync, data, error, isError, isSuccess } =
+    useCreateData1("orders");
 
   const shippingCost = 500;
 
@@ -32,33 +46,23 @@ export default function Order() {
         color: "#ffffff",
       },
     });
-
-  // const allnotifyRemovedFromCart = (results) =>
-  //   toast.error(`something whent wrong..Your order wan not sucessful!!`, {
-  //     position: "top-center",
-  //     autoClose: 2000,
-  //     hideProgressBar: true,
-  //     closeOnClick: true,
-  //     pauseOnHover: true,
-  //     draggable: true,
-  //     theme: "colored",
-  //     style: {
-  //       backgroundColor: "#b9220e",
-  //       color: "#fff",
-  //     },
-  //   });
-
-  // let today = new Date();
-  // let date =
-  //   today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
-  // let time =
-  //   "T" +
-  //   today.getHours() +
-  //   ":" +
-  //   today.getMinutes() +
-  //   ":" +
-  //   today.getSeconds();
-  // let dateTime = date + " " + time;
+  const notifyOrderFailure = (results) =>
+    toast.success(
+      `Your Order placement failed with the following error ${results}`,
+      {
+        position: "top-center",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+        style: {
+          backgroundColor: "#05b858",
+          color: "#ffffff",
+        },
+      }
+    );
 
   // fetch order details from cartItems
   let order_details = [];
@@ -75,91 +79,172 @@ export default function Order() {
 
   //ready order item
   let order = {
-    // order_id: "",
     total_price: getCartTotal(),
-    // date_ordered: dateTime,
-    // expected_date_of_delivery: "",
     status: "available",
     user_id: auth.user.user_id,
   };
 
-  useEffect(() => {
-    if (returnedOrderDetails !== null && !hasExecuted.current) {
-      notifyOrderSuccessful(returnedOrderDetails);
-      setDisable(true);
-      hasExecuted.current = true;
-    } else if (returnedOrderDetails !== null) {
-      setDisable(true);
-    } else {
-      setDisable(false);
-    }
-  }, [returnedOrderDetails]);
+  //post a new order
+  const PostNewOrder = async (newOrder) => {
+    await mutateAsync(
+      { orders: newOrder },
+      {
+        onSuccess: (data) => {
+          notifyOrderSuccessful(data);
+          setDisable(true);
+          setOrderPlacedId(data);
+          //   setGetFetchToken("");
+        },
+        onError: (error) => {
+          notifyOrderFailure(error);
+        },
+      }
+    );
+  };
 
-  console.log("orderDetails: ", returnedOrderDetails);
+  useEffect(() => {
+    console.log("getfetchToken: ", getfetchToken);
+    if (getfetchToken !== null || getfetchToken !== undefined) {
+      setDisable(true);
+    }
+    setDisable(false);
+    // navigate("/");
+
+    // if (orderPlacedId) {
+    //   // if (orderId === returnedOrderDetails && !hasExecuted.current) {
+    //   // if (orderId === returnedOrderDetails) {
+    //   setDisable(true);
+    //   //   hasExecuted.current = true;
+    //   // } else if (returnedOrderDetails !== null) {
+    //   //   setDisable(true);
+    // } else {
+    //   setDisable(false);
+    // }
+  }, [getfetchToken, navigate, orderDetailsData, orderPlacedId, verifyToken]);
+
+  //   useEffect(() => {
+  //     console.log("getfetchToken: ", getfetchToken);
+  //     if (getfetchToken !== null || getfetchToken !== undefined) {
+  //       console.log("verifyToken: ", verifyToken);
+  //       if (verifyToken) {
+  //         console.log("orderPlacedId: ", orderPlacedId);
+  //         if (orderPlacedId !== null || orderPlacedId !== undefined) {
+  //           if (orderDetailsData !== null || orderDetailsData !== undefined) {
+  //             setDisable(true);
+
+  //             setDisable(false);
+  //           }
+  //         }
+  //         setDisable(false);
+  //       }
+  //       setDisable(false);
+  //       //   navigate("/");
+  //     }
+  //     setDisable(false);
+  //     // navigate("/");
+
+  //     // if (orderPlacedId) {
+  //     //   // if (orderId === returnedOrderDetails && !hasExecuted.current) {
+  //     //   // if (orderId === returnedOrderDetails) {
+  //     //   setDisable(true);
+  //     //   //   hasExecuted.current = true;
+  //     //   // } else if (returnedOrderDetails !== null) {
+  //     //   //   setDisable(true);
+  //     // } else {
+  //     //   setDisable(false);
+  //     // }
+  //   }, [getfetchToken, navigate, orderDetailsData, orderPlacedId, verifyToken]);
 
   return (
-    <>
-      <div className="container bg-body">
+    <div className="container mx-auto max-w-screen-lg">
+      <div className="container mx-auto p-6 bg-gray-100 dark:bg-gray-900 rounded-lg shadow-lg">
         <ToastContainer />
-        <div className="card  m-3">
-          <div className="card-title card-header fw-bold"> Order summary</div>
-          <div className=" card-body">
-            <div className=" card-text">
-              Total number of Items: {cartItems.length}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+          <div className="text-3xl font-bold mb-4">Order Summary</div>
+          <table className="min-w-full bg-white dark:bg-gray-800">
+            <tbody>
+              <tr className="bg-gray-100 dark:bg-gray-700">
+                <td className="py-2 px-4 text-xl">Total number of Items:</td>
+                <td className="py-2 px-4 text-xl">{cartItems.length}</td>
+              </tr>
+              <tr className="bg-white dark:bg-gray-800">
+                <td className="py-2 px-4 text-xl">Cost of Items:</td>
+                <td className="py-2 px-4 text-xl">₦{getCartTotal()}</td>
+              </tr>
+              <tr className="bg-gray-100 dark:bg-gray-700">
+                <td className="py-2 px-4 text-xl">Cost of delivery:</td>
+                <td className="py-2 px-4 text-xl">₦{shippingCost}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div className="mt-6 p-4 bg-gray-200 dark:bg-gray-700 rounded-lg shadow-inner">
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              Total:
             </div>
-            <div className=" card-text">Cost of Items: ₦ {getCartTotal()}</div>
-            <div className=" card-text">Cost of delivery: ₦ {shippingCost}</div>
-            <div className=" card-text text-danger fw-bold">
-              Total: ₦ {getCartTotal() + shippingCost}
-            </div>
-          </div>
-        </div>
-        <div className="card  m-3">
-          <div className=" card-title card-header fw-bold">
-            {" "}
-            Delivery Address summary
-          </div>
-          <div className=" card-body">
-            <div className=" card-text">
-              <strong>Address:</strong> {auth.address}
-            </div>
-            <div className=" card-text mt-2">
-              Do you want to ship to a different address?
-            </div>
-            <div>
-              <button className="btn btn-primary">change address</button>
+            <div className="text-4xl font-extrabold text-red-600 dark:text-red-400">
+              ₦{getCartTotal() + shippingCost}
             </div>
           </div>
         </div>
-        <div className="card  m-3">
-          <div className=" card-header card-title fw-bold">
-            {" "}
-            Changed your mind?
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+          <div className="text-3xl font-bold mb-4">
+            Delivery Address Summary
           </div>
-          <div className=" card-body">
-            <div className=" card-text">
-              <NavLink className="btn btn-primary" to="/shoppingcart">
-                modify cart now
-              </NavLink>
-            </div>
+          <div className="text-xl mb-2">
+            <strong>Address:</strong> {auth.address}
           </div>
-        </div>
-
-        <div className="card">
+          <div className="text-xl mb-4">
+            Do you want to ship to a different address?
+          </div>
           <button
-            className="btn btn-danger btn-lg m-3 w-25"
-            onClick={() => {
-              if (returnedOrderDetails === null)
-                postOrder({ order, order_details });
+            className={`px-4 py-2  text-white text-sm font-bold uppercase rounded ${
+              disable
+                ? "bg-gray-400"
+                : "bg-blue-600 hover:bg-blue-500 focus:outline-none focus:bg-blue-500"
+            } m-3 w-1/4`}
+            disabled={disable}
+          >
+            Change Address
+          </button>
+        </div>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+          <div className="text-3xl font-bold mb-4">Changed your mind?</div>
+          <NavLink
+            className={`px-4 py-2  text-white text-sm font-bold uppercase rounded ${
+              disable
+                ? "bg-gray-400"
+                : "bg-blue-600 hover:bg-blue-500 focus:outline-none focus:bg-blue-500"
+            } m-3 w-1/4`}
+            to="/shoppingcart"
+            style={{
+              pointerEvents: disable ? "none" : "auto",
             }}
             disabled={disable}
           >
-            {returnedOrderDetails == null ? "submit order" : "order submitted"}
+            Modify Cart Now
+          </NavLink>
+        </div>
+        <div className="flex justify-center">
+          <button
+            className={`px-8 py-2 text-white text-lg font-bold uppercase rounded ${
+              disable
+                ? "bg-gray-400"
+                : "bg-red-600 hover:bg-red-500 focus:outline-none focus:bg-red-500"
+            } m-3 w-1/4`}
+            onClick={() => {
+              console.log("orderPlacedId", orderPlacedId);
+              if (orderPlacedId === null || orderPlacedId === undefined)
+                PostNewOrder({ order, order_details });
+            }}
+            disabled={disable}
+          >
+            {orderPlacedId == null ? "Submit Order" : "Order Submitted"}
           </button>
         </div>
       </div>
-      <div>{returnedOrderDetails != null && <OrderDetails />}</div>
-      {/* <div>{isVisible ? <OrderDetails /> : <></>}</div> */}
-    </>
+      <div>
+        {orderPlacedId != null && <OrderDetails cartItems={cartItems} />}
+      </div>
+    </div>
   );
 }

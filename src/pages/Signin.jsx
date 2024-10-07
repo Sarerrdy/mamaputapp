@@ -1,5 +1,5 @@
 import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useCreateData } from "../hooks/useApi";
 import { ToastContainer, toast } from "react-toastify";
@@ -18,7 +18,7 @@ const LoginForm = () => {
   const createOrderMutation = useCreateData("login");
 
   const notifySuccessful = (results) =>
-    toast.success(`Registration of ${results} was sucessful`, {
+    toast.success(`Signin of ${results} was sucessful`, {
       position: "top-center",
       autoClose: 4000,
       hideProgressBar: false,
@@ -33,7 +33,7 @@ const LoginForm = () => {
     });
 
   const notifyError = () =>
-    toast.error(`Registration failed`, {
+    toast.error(`Sign-in operation failed!!`, {
       position: "top-center",
       autoClose: 2000,
       hideProgressBar: true,
@@ -70,7 +70,7 @@ const LoginForm = () => {
 
   const handleSubmitEvent = (res) => {
     try {
-      console.log("LOGIN-RES", res[1]);
+      console.log("LOGIN-RES", res);
 
       let authToken = res[0];
       let authUser = res[1];
@@ -95,7 +95,8 @@ const LoginForm = () => {
         localStorage.setItem("site_address", JSON.stringify(authAdress));
         localStorage.setItem("site_token", authToken);
         auth.setIsAuthenticated(true);
-        navigate("/");
+        // navigate("/");
+        <Outlet />;
         return;
       }
       throw new Error(res.message);

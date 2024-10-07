@@ -1,5 +1,5 @@
 import { createContext, useState, useContext } from "react";
-import { useCreateData } from "../hooks/useApi";
+import { useCreateData, useFetchData } from "../hooks/useApi";
 
 const OrderContext = createContext();
 
@@ -12,9 +12,8 @@ export const OrderProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
   const [returnedOrderDetails, setReturnedOrderDetails] = useState(null);
 
-  const createOrderMutation = useCreateData("orders");
-
   //post orders
+  const createOrderMutation = useCreateData("orders");
   const postOrder = async (newOrder) => {
     setOrders(newOrder);
     const data = await createOrderMutation.mutateAsync({

@@ -44,7 +44,6 @@ const PrivateRoute = () => {
 
 export default PrivateRoute;
 
-// useEffect(() => {
 //   async function loginWithToken(data, endpoint) {
 //     if (auth.token !== "") {
 //       const res = await auth.fetchAction(data, endpoint);

@@ -10,6 +10,7 @@ export const CartProvider = ({ children }) => {
       ? JSON.parse(localStorage.getItem("cartItems"))
       : []
   );
+  const [getfetchToken, setGetFetchToken] = useState("");
 
   //add item to cart
   const addToCart = (item) => {
@@ -89,6 +90,8 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         clearCart,
         getCartTotal,
+        getfetchToken,
+        setGetFetchToken,
       }}
     >
       {children}

@@ -69,7 +69,7 @@ export default function MenuCard({ data, error, isLoading }) {
     });
 
   const onenotifyRemovedFromCart = (item) =>
-    toast.error(`1 ${item.name} removed from cart!`, {
+    toast.error(`1 ${item.name} item was removed from cart!`, {
       position: "top-center",
       autoClose: 2000,
       hideProgressBar: true,
@@ -94,8 +94,8 @@ export default function MenuCard({ data, error, isLoading }) {
 
   if (isLoading)
     return (
-      <div className=" flex justify-between items-center px-20 m-7 mt-lg-5">
-        <Spinner />
+      <div className="flex justify-center h-screen p-24">
+        <Spinner className="w-24 h-24" />
       </div>
     );
   if (error)
@@ -131,6 +131,7 @@ export default function MenuCard({ data, error, isLoading }) {
             <div className="flex justify-center align-end">
               <img
                 src={menu.menu_url}
+                // src="src/assets/images/moimoi.png"
                 alt={menu.name}
                 className="rounded-md w-75"
               />

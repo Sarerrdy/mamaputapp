@@ -41,6 +41,30 @@ export const useCreateData = (endpoint) => {
   );
 };
 
+// Create data
+export const useCreateData1 = (endpoint) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    // queryKey:[endpoint],
+    mutationFn: async (newData) => {      
+      const { data } = await apiClient.post(endpoint, newData);
+      console.log("RETURN MUTATION-1", data)   
+      return data;
+    },
+    
+      onSuccess: (data1) => {
+        queryClient.invalidateQueries([endpoint]);
+       console.log("RETURN MUTATION-2", data1)      
+      //  setOrderDetails("data")
+      },
+      onError: (error) => {
+        console.error('ERROR FROM useAPI MUTATION:', error);    
+    }
+    }    
+  );
+  
+};
+
 // Update data
 export const useUpdateData = (endpoint) => {
   const queryClient = useQueryClient();
