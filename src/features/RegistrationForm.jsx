@@ -4,7 +4,7 @@ import statesAndLGAs from "../data/stateLGAList";
 import { useCreateData } from "../hooks/useApi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 //state and corresponding LGAs Array
@@ -19,7 +19,7 @@ const RegistrationForm = () => {
   } = useForm();
   const [selectedState, setSelectedState] = useState("");
   const createOrderMutation = useCreateData("register");
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const auth = useAuth();
 
   const notifySuccessful = (results) =>

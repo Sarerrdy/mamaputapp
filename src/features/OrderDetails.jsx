@@ -1,14 +1,22 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { CartContext } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
 import { OrderCtx } from "../contexts/OrderContext";
+import { useFetchData } from "../hooks/useApi";
 
-export default function OrderDetails(props) {
+export default function OrderDetails() {
   const { getCartTotal } = useContext(CartContext);
   const auth = useAuth();
-  const { returnedOrderDetails } = OrderCtx();
+  const { orderPlacedId } = OrderCtx();
   const shippingCost = 500;
+  const { data: orderDetailsData } = useFetchData(
+    `orderdetails?order_id=${orderPlacedId}`
+  );
+
+  useEffect(() => {
+    console.log("ORDERDETAILS: ", orderDetailsData);
+  }, []);
 
   return (
     <div
@@ -33,11 +41,12 @@ export default function OrderDetails(props) {
             <tbody>
               <tr className="bg-gray-100 dark:bg-gray-700">
                 <td className="py-2 px-4 text-xl">Order number:</td>
-                <td className="py-2 px-4 text-xl">{returnedOrderDetails}</td>
+                <td className="py-2 px-4 text-xl">{orderPlacedId}</td>
               </tr>
               <tr className="bg-white dark:bg-gray-700">
                 <td className="py-2 px-4 text-xl">Total number of Items:</td>
-                <td className="py-2 px-4 text-xl">{props.cartItems.length}</td>
+                <td className="py-2 px-4 text-xl">NUMBER</td>
+                {/* <td className="py-2 px-4 text-xl">{props.cartItems.length}</td> */}
               </tr>
               <tr className="bg-gray-100 dark:bg-gray-800">
                 <td className="py-2 px-4 text-xl">Cost of Items:</td>

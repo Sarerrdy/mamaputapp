@@ -13,20 +13,21 @@ export const AuthProvider = ({ children }) => {
   );
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [returnUrl, setReturnUrl] = useState("");
 
   // fetch function
-  async function fetchAction(data, endpoint) {
-    const response = await fetch("http://127.0.0.1:5001/api/" + endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const jsonResult = await response.json();
-    console.log("AUTH-JSON-RESPONSE", jsonResult);
-    return jsonResult;
-  }
+  // async function fetchAction(data, endpoint) {
+  //   const response = await fetch("http://127.0.0.1:5001/api/" + endpoint, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(data),
+  //   });
+  //   const jsonResult = await response.json();
+  //   console.log("AUTH-JSON-RESPONSE", jsonResult);
+  //   return jsonResult;
+  // }
 
   const logOut = () => {
     setUser("");
@@ -47,10 +48,12 @@ export const AuthProvider = ({ children }) => {
         setUser,
         address,
         setAddress,
-        fetchAction,
+        // fetchAction,
         logOut,
         isAuthenticated,
         setIsAuthenticated,
+        returnUrl,
+        setReturnUrl,
       }}
     >
       {children}

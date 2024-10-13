@@ -6,6 +6,7 @@ import { CartContext } from "../contexts/CartContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useFetchData } from "../hooks/useApi";
+// import { OrderCtx } from "../contexts/OrderContext";
 
 const Cart = (showModal) => {
   const {
@@ -14,9 +15,8 @@ const Cart = (showModal) => {
     removeFromCart,
     clearCart,
     getCartTotal,
-    setGetFetchToken,
+    setOrderToken,
   } = useContext(CartContext);
-
   const { data: fetchToken } = useFetchData("checkerToken");
 
   //Added item Toast Notifications
@@ -168,7 +168,11 @@ const Cart = (showModal) => {
               <NavLink
                 className="px-8 py-2 bg-green-600 text-white text-xs font-bold uppercase rounded hover:bg-green-500 focus:outline-none focus:bg-green-500"
                 to="/checkout"
-                onClick={() => setGetFetchToken(fetchToken)}
+                onClick={() => {
+                  const token = fetchToken;
+                  setOrderToken(token);
+                  localStorage.setItem("order_token", token);
+                }}
               >
                 Check Out
               </NavLink>

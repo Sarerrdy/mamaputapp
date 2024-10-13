@@ -7,22 +7,12 @@ const PrivateRoute = () => {
   const [isLogin, setIsLogin] = useState(null);
   const createOrderMutation = useCreateData("token");
   const auth = useAuth();
-  console.log("Private Route token", auth.token);
-
-  //login with token
-  // async function loginWithToken(data, endpoint) {
-  //   if (auth.token !== "") {
-  //     const res = await auth.fetchAction(data, endpoint);
-  //     if (res == true) return true;
-  //   }
-  //   return false;
-  // }
-  // const result = loginWithToken({ token: auth.token }, "token");
 
   useEffect(() => {
     // check a login check
     const checkLoginStatus = async () => {
       try {
+        auth.setReturnUrl(window.location.pathname);
         const response = await createOrderMutation.mutateAsync({
           token: auth.token,
         });

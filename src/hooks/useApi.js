@@ -5,14 +5,19 @@ import apiClient from '../services/apiClient';
 
 // Fetch data
 export const useFetchData = (endpoint) => {
-  return useQuery( {
-    queryKey:[endpoint],
+  return useQuery({
+    queryKey: [endpoint],
     queryFn: async () => {
-    const { data } = (await apiClient.get(endpoint));
-    console.log(data);
-    return data;
-  }});
+      const { data } = await apiClient.get(endpoint);
+      console.log("useFetchApi-Data: ", data);
+      return data;
+    },
+    // staleTime: 1 * 60 * 1000, // 5 minutes
+    // cacheTime: 1 * 60 * 1000, // 10 minutes
+    // refetchOnWindowFocus: false, // Disable refetch on window focus
+  });
 };
+
 
 
 // Create data

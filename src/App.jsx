@@ -19,6 +19,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { OrderProvider } from "./contexts/OrderContext";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Register from "./pages/Register";
+import OrderSummary from "./pages/OrderSummary";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,6 +53,7 @@ function App() {
                   <Route path="register" element={<Register />} />
                   <Route element={<PrivateRoute />}>
                     <Route path="checkout" element={<Checkout />} />
+                    <Route path="ordersummary" element={<OrderSummary />} />
                   </Route>
                 </Route>
               </Routes>

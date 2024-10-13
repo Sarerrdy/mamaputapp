@@ -1,5 +1,5 @@
 import { useAuth } from "../contexts/AuthContext";
-import { useNavigate, Outlet } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useCreateData } from "../hooks/useApi";
 import { ToastContainer, toast } from "react-toastify";
@@ -32,8 +32,8 @@ const LoginForm = () => {
       },
     });
 
-  const notifyError = () =>
-    toast.error(`Sign-in operation failed!!`, {
+  const notifyError = (error) =>
+    toast.error(`Sign-in operation failed!!: ${error}`, {
       position: "top-center",
       autoClose: 2000,
       hideProgressBar: true,
@@ -47,31 +47,31 @@ const LoginForm = () => {
       },
     });
 
-  const onSubmit = (data) => {
-    const checkLoginStatus = async () => {
-      try {
-        const response = await createOrderMutation.mutateAsync({
+  const onSubmit = async (data) => {
+    try {
+      await createOrderMutation.mutateAsync(
+        {
           user: data,
-        });
-        if (response[1]["email"] == data["username"]) {
-          notifySuccessful(response[1]["email"]);
-          setTimeout(() => {
-            handleSubmitEvent(response);
-          }, 1000);
+        },
+        {
+          onSuccess(data) {
+            notifySuccessful(data["email"]);
+            initializer(data);
+          },
+          onError: (error) => {
+            console.error("LOGIN-ERROR", error);
+            notifyError(error);
+          },
         }
-        // reset();
-      } catch (error) {
-        console.error("something when wrong", error);
-        notifyError();
-      }
-    };
-    checkLoginStatus();
+      );
+    } catch (error) {
+      console.error("LOGIN-ERROR", error);
+      notifyError(error);
+    }
   };
 
-  const handleSubmitEvent = (res) => {
+  const initializer = (res) => {
     try {
-      console.log("LOGIN-RES", res);
-
       let authToken = res[0];
       let authUser = res[1];
       let authAdress =
@@ -85,8 +85,6 @@ const LoginForm = () => {
         ", " +
         res[2]["state"];
 
-      console.log("Address authContext", authAdress);
-
       if (authUser) {
         auth.setUser(authUser);
         auth.setToken(authToken);
@@ -95,14 +93,16 @@ const LoginForm = () => {
         localStorage.setItem("site_address", JSON.stringify(authAdress));
         localStorage.setItem("site_token", authToken);
         auth.setIsAuthenticated(true);
-        // navigate("/");
-        return <Outlet />;
+        if (auth.returnUrl == "/checkout") navigate("/shoppingcart");
+        if (auth.returnUrl == "") navigate("/");
+        if (auth.returnUrl == "") navigate(auth.returnUrl);
+        // return <Outlet />;
       }
-      throw new Error(res.message);
+      // throw new Error(res.message);
     } catch (err) {
       console.error(err);
     }
-    return;
+    // return;
   };
 
   return (
