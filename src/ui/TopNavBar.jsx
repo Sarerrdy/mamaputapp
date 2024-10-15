@@ -44,13 +44,15 @@ export default function TopNavBar() {
             </DisclosureButton>
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-            <div className="flex flex-shrink-0 items-center">
-              <img
-                alt="Mama Put"
-                // src="src/assets/images/mamaput_logo1.png"
-                src="./images/mamaput_logo1.png"
-                className="h-8 w-auto"
-              />
+            <div className="flex flex-shrink-0 items-center cursor-pointer">
+              <NavLink to="/">
+                <img
+                  alt="Mama Put"
+                  // src="src/assets/images/mamaput_logo1.png"
+                  src="./images/mamaput_logo1.png"
+                  className="h-8 w-auto"
+                />
+              </NavLink>
             </div>
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
@@ -61,7 +63,7 @@ export default function TopNavBar() {
                     aria-current={item.current ? "page" : undefined}
                     className={classNames(
                       item.current
-                        ? "bg-gray-900 text-white"
+                        ? "bg-gray-900 text-white cusor"
                         : "text-gray-200 hover:bg-gray-700 hover:text-white",
                       "rounded-md px-3 py-2 text-lg lg:text-xl font-medium"
                     )}
@@ -164,7 +166,7 @@ export default function TopNavBar() {
             <DisclosureButton
               key={item.name}
               as="NavLink"
-              to={item.to}
+              to={item.href}
               aria-current={item.current ? "page" : undefined}
               className={classNames(
                 item.current
@@ -173,7 +175,19 @@ export default function TopNavBar() {
                 "block rounded-md px-3 py-2 text-base font-medium"
               )}
             >
-              {item.name}
+              <NavLink
+                key={item.name}
+                to={item.href}
+                aria-current={item.current ? "page" : undefined}
+                className={classNames(
+                  item.current
+                    ? "bg-gray-900 text-white cusor"
+                    : "text-gray-200 hover:bg-gray-700 hover:text-white",
+                  "rounded-md px-3 py-2 text-lg lg:text-xl font-medium"
+                )}
+              >
+                {item.name}
+              </NavLink>
             </DisclosureButton>
           ))}
         </div>

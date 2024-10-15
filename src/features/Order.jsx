@@ -30,12 +30,35 @@ export default function Order() {
   );
   const { mutateAsync, isLoading } = useCreateData("orders");
   const [loadIdentifier, setLoadIdentifier] = useState(0);
-  const shippingCost = 500;
+  //payment states
   const [selectedPaymentOption, setSelectedPaymentOption] =
     useState("payondelivery");
+  const [selectedShippingOption, setSelectedShippingOption] =
+    useState("express");
+  const [paymentStatus, setPaymentStatus] = useState("");
+  const [paymentDate, setPaymentDate] = useState("");
+  //address states
   const [isChangingAddress, setIsChangingAddress] = useState(false);
   const [address, setAddress] = useState(auth.address);
   const [savedAddress, setSavedAddress] = useState("");
+  //shipping states
+  const [shippingStatus, setShippingStatus] = useState("");
+  const [shippedDate, setShippedDate] = useState("");
+  const [expectedDeliveryDate, setExpectedDeliveryDate] = useState("");
+  const [shippingCost, setShippingCost] = useState(0);
+
+  const [
+    newAddress,
+    setNewAddress,
+    landmark,
+    setLandmark,
+    town,
+    setTown,
+    lga,
+    setLga,
+    state,
+    setState,
+  ] = useState("");
 
   const handleChangeAddressClick = () => {
     setIsChangingAddress((prev) => !prev);
@@ -44,13 +67,24 @@ export default function Order() {
   const handleAddNewAddress = (fullNewAddress) => {
     setAddress(fullNewAddress);
     setSavedAddress(fullNewAddress);
+    const [newAddress, landmark, town, lga, state] = fullNewAddress.split(", ");
+    setNewAddress(newAddress);
+    setLandmark(landmark);
+    setTown(town);
+    setLga(lga);
+    setState(state);
     setIsChangingAddress(false);
   };
 
   //payment
   const handleOptionChange = (e) => {
     setSelectedPaymentOption(e.target.value);
+    setSelectedShippingOption(e.target.value);
     setAddress(e.target.value);
+  };
+  //payment
+  const handleShippingOptionChange = (e) => {
+    setSelectedShippingOption(e.target.value);
   };
   ///Toast
 
@@ -87,7 +121,53 @@ export default function Order() {
       }
     );
 
-  // fetch order details from cartItems
+  //Generate new address
+  const newAddressArgs = {
+    address: newAddress,
+    landmark: landmark,
+    town: town,
+    lga: lga,
+    state: state,
+    user_id: auth.user_id,
+  };
+
+  //Generate payment details
+  const payment = {
+    payment_Method: selectedPaymentOption,
+    amount: getCartTotal() + shippingCost,
+    payment_status: paymentStatus,
+    payment_date: paymentDate,
+    order_id: 0,
+  };
+
+  //Generate shipping
+  const shipping = {
+    shipping_Method: selectedShippingOption,
+    shipping_cost: shippingCost,
+    shipping_status: shippingStatus,
+    shipped_date: shippedDate,
+    expected_delivery_date: expectedDeliveryDate,
+    order_id: 0,
+    address_id: "",
+  };
+
+  //initialize shipping and payment state
+  const shippingAndPaymentStateInitializer = useCallback(async () => {
+    setPaymentDate("");
+    setPaymentStatus("Pending");
+    setShippingCost(500);
+    setShippingStatus("Pending");
+    setShippedDate("");
+    setExpectedDeliveryDate("");
+  }, [
+    setExpectedDeliveryDate,
+    setPaymentDate,
+    setPaymentStatus,
+    setShippedDate,
+    setShippingStatus,
+  ]);
+
+  // create orderDetails from cartItems
   let order_details = [];
   cartItems.map((cartItem) => {
     order_details.push({
@@ -100,7 +180,7 @@ export default function Order() {
     });
   });
 
-  //ready order item
+  //Generate an order
   let order = {
     total_price: getCartTotal(),
     status: "available",
@@ -152,8 +232,9 @@ export default function Order() {
   }, []);
 
   useEffect(() => {
+    shippingAndPaymentStateInitializer();
     verifyOrderToken();
-  }, [verifyOrderToken, loadIdentifier]); // Depend on loadIdentifier to force re-run
+  }, [verifyOrderToken, loadIdentifier, shippingAndPaymentStateInitializer]); // Depend on loadIdentifier to force re-run
 
   return (
     <div className="container mx-auto max-w-screen-lg">
@@ -186,6 +267,25 @@ export default function Order() {
             </div>
           </div>
         </div>
+
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+          <div className="text-3xl font-bold mb-4">Changed your mind?</div>
+          <NavLink
+            className={`px-4 py-2  text-white text-base font-bold uppercase rounded ${
+              disable
+                ? "bg-gray-400"
+                : "bg-blue-600 hover:bg-blue-500 focus:outline-none focus:bg-blue-500"
+            } m-3 w-1/4`}
+            to="/shoppingcart"
+            style={{
+              pointerEvents: disable ? "none" : "auto",
+            }}
+            disabled={disable}
+          >
+            Modify Cart Now
+          </NavLink>
+        </div>
+
         {/* address section */}
 
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
@@ -194,6 +294,7 @@ export default function Order() {
           </div>
           <div className="text-xl mb-2">
             <strong>Address(s):</strong>
+            <br />
             <br />
             <div className="space-y-4">
               <label
@@ -252,23 +353,7 @@ export default function Order() {
             />
           )}
         </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
-          <div className="text-3xl font-bold mb-4">Changed your mind?</div>
-          <NavLink
-            className={`px-4 py-2  text-white text-base font-bold uppercase rounded ${
-              disable
-                ? "bg-gray-400"
-                : "bg-blue-600 hover:bg-blue-500 focus:outline-none focus:bg-blue-500"
-            } m-3 w-1/4`}
-            to="/shoppingcart"
-            style={{
-              pointerEvents: disable ? "none" : "auto",
-            }}
-            disabled={disable}
-          >
-            Modify Cart Now
-          </NavLink>
-        </div>
+
         {/* payment section */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
           <h2 className="text-3xl font-bold mb-4">Choose Method of Payment</h2>
@@ -332,6 +417,63 @@ export default function Order() {
           </button> */}
         </div>
 
+        {/* Shipping section */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+          <h2 className="text-3xl font-bold mb-4">Choose shipping Method</h2>
+          <div>
+            <label
+              htmlFor="pickup"
+              className="flex items-center cursor-pointer"
+            >
+              <input
+                type="radio"
+                id="pickup"
+                value="pickup"
+                checked={selectedShippingOption === "pickup"}
+                onChange={handleShippingOptionChange}
+                className="form-radio11 h-5 w-5 text-green-600"
+                disabled
+              />
+              <span className="ml-2 text-gray-700">Pickup</span>
+            </label>
+          </div>
+
+          <div>
+            <label
+              htmlFor="standard"
+              className="flex items-center cursor-pointer"
+            >
+              <input
+                type="radio"
+                id="standard"
+                value="standard"
+                checked={selectedShippingOption === "standard"}
+                onChange={handleShippingOptionChange}
+                className="form-radio h-5 w-5 text-green-600"
+                disabled
+              />
+              <span className="ml-2 text-gray-700">Standard delivery</span>
+            </label>
+          </div>
+
+          <div>
+            <label
+              htmlFor="express"
+              className="flex items-center cursor-pointer"
+            >
+              <input
+                type="radio"
+                id="express"
+                value="express"
+                checked={selectedShippingOption === "express"}
+                onChange={handleShippingOptionChange}
+                className="form-radio h-5 w-5 text-green-600"
+              />
+              <span className="ml-2 text-gray-700">Express delivery</span>
+            </label>
+          </div>
+        </div>
+
         <div className="flex justify-center">
           <button
             className={`px-8 py-2 text-white text-lg font-bold uppercase rounded ${
@@ -343,7 +485,13 @@ export default function Order() {
               const isValid = verifyToken;
               console.log("IsValid", isValid);
               if (isValid) {
-                PostNewOrder({ order, order_details });
+                PostNewOrder({
+                  order,
+                  order_details,
+                  newAddressArgs,
+                  payment,
+                  shipping,
+                });
               } else {
                 navigate("/ShoppingCart");
               }

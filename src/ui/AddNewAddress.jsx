@@ -13,18 +13,20 @@ function AddNewAddress({ stateAndLga, onSave, initialAddress }) {
 
   useEffect(() => {
     if (initialAddress) {
-      const [newAddress, town, lga, state] = initialAddress.split(", ");
+      const [newAddress, landmark, town, lga, state] =
+        initialAddress.split(", ");
       setValue("newAddress", newAddress);
       setValue("town", town);
       setValue("lga", lga);
       setValue("state", state);
+      setValue("landmark", landmark);
     }
   }, [initialAddress, setValue]);
 
   const state = watch("state");
 
   const onSubmit = (data) => {
-    const fullNewAddress = `${data.newAddress}, ${data.town}, ${data.lga}, ${data.state}`;
+    const fullNewAddress = `${data.newAddress}, ${data.landmark}, ${data.town}, ${data.lga}, ${data.state}`;
     onSave(fullNewAddress);
   };
 
@@ -97,6 +99,16 @@ function AddNewAddress({ stateAndLga, onSave, initialAddress }) {
           {errors.town && (
             <span className="text-red-600">{errors.town.message}</span>
           )}
+        </div>
+        <div>
+          <label className="block text-lg font-medium text-gray-700">
+            Landmark(s)
+          </label>
+          <input
+            type="text"
+            {...register("landmark")}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+          />
         </div>
         <button
           type="submit"
