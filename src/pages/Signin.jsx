@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useCreateData } from "../hooks/useApi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { NavLink } from "react-router-dom";
 
 const LoginForm = () => {
   //try token authentication first
@@ -94,8 +95,8 @@ const LoginForm = () => {
         localStorage.setItem("site_token", authToken);
         auth.setIsAuthenticated(true);
         if (auth.returnUrl == "/checkout") navigate("/shoppingcart");
+        if (auth.returnUrl !== "") navigate(auth.returnUrl);
         if (auth.returnUrl == "") navigate("/");
-        if (auth.returnUrl == "") navigate(auth.returnUrl);
         // return <Outlet />;
       }
       // throw new Error(res.message);
@@ -149,12 +150,24 @@ const LoginForm = () => {
               </p>
             )}
           </div>
-          <button
-            type="submit"
-            className="w-full px-4 py-2 font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          <div>
+            <button
+              type="submit"
+              className="w-full px-4 py-2 font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Login
+            </button>
+          </div>
+
+          <hr />
+          <br />
+          <span className="mr-12"> Don't own an account yet?</span>
+          <NavLink
+            className=" px-4 py-2 font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            to="/register"
           >
-            Login
-          </button>
+            Register new account
+          </NavLink>
         </form>
       </div>
     </div>

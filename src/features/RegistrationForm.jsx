@@ -180,7 +180,7 @@ const RegistrationForm = () => {
             </p>
           )}
         </div>
-        <div>
+        {/* <div>
           <label className="block text-base font-medium text-gray-700">
             User URL
           </label>
@@ -191,7 +191,7 @@ const RegistrationForm = () => {
           {errors.user_url && (
             <p className="text-red-500 text-sm mt-1">User URL is required</p>
           )}
-        </div>
+        </div> */}
         <h2 className="text-2xl font-bold mt-6 mb-4 text-center">Address</h2>
         <div>
           <label className="block text-base font-medium text-gray-700">

@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 // import { useState, useEffect, useContext } from "react";
 import { CartContext } from "../contexts/CartContext";
 import PropTypes, { object } from "prop-types";
@@ -20,23 +20,6 @@ export default function MenuCard({ data, error, isLoading }) {
   // const toggle = () => {
   //   setShowModal(!showModal);
   // };
-
-  // async function getMenus() {
-  //   // const response = await fetch("http://127.0.0.1:5001/api/menus"); // fetch the menus
-  //   // "https://moray-large-vervet.ngrok-free.app/api/menus",
-  //   const response = await fetch("http://127.0.0.1:5001/api/menus", {
-  //     method: "get",
-  //     headers: new Headers({
-  //       "ngrok-skip-browser-warning": "69420",
-  //     }),
-  //   }); // fetch the menus
-  //   const data = await response.json(); // convert the response to json
-  //   setMenus(data); // set the menus in the state to the menus we fetched
-  // }
-
-  useEffect(() => {
-    cartItems;
-  }, [cartItems]);
 
   const notifyAddedToCart = (item) =>
     toast.success(`1 ${item.name} added to cart!`, {
@@ -157,37 +140,47 @@ export default function MenuCard({ data, error, isLoading }) {
                   Add to cart
                 </button>
               ) : (
-                <div className="flex gap-4">
-                  <button
-                    className="px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
-                    onClick={() => {
-                      addToCart(menu);
-                      notifyAddedToCart(menu);
-                    }}
-                  >
-                    +
-                  </button>
-                  <p className="text-gray-600">
-                    {
-                      cartItems.find((item) => item.menu_id === menu.menu_id)
-                        .quantity
-                    }
-                  </p>
-                  <button
-                    className="px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
-                    onClick={() => {
-                      const cartItem = cartItems.find(
-                        (item) => item.menu_id === menu.menu_id
-                      );
-                      if (cartItem.quantity === 1) {
-                        allhandleRemoveFromCart(menu);
-                      } else {
-                        onehandleRemoveFromCart(menu);
+                <div>
+                  <div className="flex gap-4">
+                    <button
+                      className="px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
+                      onClick={() => {
+                        addToCart(menu);
+                        notifyAddedToCart(menu);
+                      }}
+                    >
+                      +
+                    </button>
+                    <p className="text-gray-600">
+                      {
+                        cartItems.find((item) => item.menu_id === menu.menu_id)
+                          .quantity
                       }
-                    }}
-                  >
-                    -
-                  </button>
+                    </p>
+                    <button
+                      className="px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
+                      onClick={() => {
+                        const cartItem = cartItems.find(
+                          (item) => item.menu_id === menu.menu_id
+                        );
+                        if (cartItem.quantity === 1) {
+                          allhandleRemoveFromCart(menu);
+                        } else {
+                          onehandleRemoveFromCart(menu);
+                        }
+                      }}
+                    >
+                      -
+                    </button>
+                  </div>
+                  <div className="mt-6 flex justify-center items-center">
+                    <NavLink
+                      className="px-4 py-2 bg-green-600 text-white text-xs font-bold uppercase rounded hover:bg-grren-500 focus:outline-none focus:bg-grren-500"
+                      to="/shoppingcart"
+                    >
+                      Check Out
+                    </NavLink>
+                  </div>
                 </div>
               )}
             </div>
