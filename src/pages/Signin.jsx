@@ -158,16 +158,16 @@ const LoginForm = () => {
               Login
             </button>
           </div>
-
           <hr />
-          <br />
-          <span className="mr-12"> Don't own an account yet?</span>
-          <NavLink
-            className=" px-4 py-2 font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            to="/register"
-          >
-            Register new account
-          </NavLink>
+          <div className="flex flex-col sm:flex-row">
+            <span className="mr-12"> Don't own an account yet?</span>
+            <NavLink
+              className=" px-4 py-2 font-medium text-center text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              to="/register"
+            >
+              Register new account
+            </NavLink>
+          </div>
         </form>
       </div>
     </div>

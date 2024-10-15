@@ -40,8 +40,8 @@ const RegistrationForm = () => {
   // const notifyError = (item) =>
   //   toast.error(`Registration failed  ${item.name}`, {
 
-  const notifyError = () =>
-    toast.error(`Registration failed`, {
+  const notifyError = (error) =>
+    toast.error(`Registration failed. Error: ${error}`, {
       position: "top-center",
       autoClose: 2000,
       hideProgressBar: true,
@@ -72,7 +72,7 @@ const RegistrationForm = () => {
         }
       } catch (error) {
         console.error("something when wrong", error);
-        notifyError();
+        notifyError(error);
       }
     };
     checkLoginStatus();
