@@ -74,14 +74,12 @@ export default function OrderDetails() {
                 <td className="py-2 px-4 text-xl"> {auth.address}</td>
               </tr>
               <tr className="bg-gray-100 dark:bg-gray-700">
-                <td className="py-2 px-4 text-xl">SOrder status: </td>
+                <td className="py-2 px-4 text-xl">Order status: </td>
                 <td className="py-2 px-4 text-xl"> Recieved</td>
               </tr>
               <tr className="bg-gray-100 dark:bg-gray-700">
-                <td className="py-2 px-4 text-xl">
-                  Expected delivery date: Not yet fixed:{" "}
-                </td>
-                <td className="py-2 px-4 text-xl"> no delivery date yet</td>
+                <td className="py-2 px-4 text-xl">Expected delivery date: </td>
+                <td className="py-2 px-4 text-xl"> pending</td>
               </tr>
             </tbody>
           </table>
