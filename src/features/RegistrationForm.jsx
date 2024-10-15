@@ -14,6 +14,7 @@ const RegistrationForm = () => {
   const {
     register,
     handleSubmit,
+    watch,
     reset,
     formState: { errors },
   } = useForm();
@@ -21,6 +22,8 @@ const RegistrationForm = () => {
   const createOrderMutation = useCreateData("register");
   // const navigate = useNavigate();
   const auth = useAuth();
+
+  const password = watch("password");
 
   const notifySuccessful = (results) =>
     toast.success(`Registration of ${results} was sucessful`, {
@@ -36,9 +39,6 @@ const RegistrationForm = () => {
         color: "#ffffff",
       },
     });
-
-  // const notifyError = (item) =>
-  //   toast.error(`Registration failed  ${item.name}`, {
 
   const notifyError = (error) =>
     toast.error(`Registration failed. Error: ${error}`, {
@@ -65,10 +65,10 @@ const RegistrationForm = () => {
 
         if (response == data["email"]) notifySuccessful(response);
         {
-          setTimeout(() => {
-            reset();
-            auth.logOut();
-          }, 2000);
+          reset();
+          auth.logOut();
+          // setTimeout(() => {
+          // }, 2000);
         }
       } catch (error) {
         console.error("something when wrong", error);
@@ -163,6 +163,25 @@ const RegistrationForm = () => {
           />
           {errors.password && (
             <p className="text-red-500 text-sm mt-1">Password is required</p>
+          )}
+        </div>
+        <div className="mt-4">
+          <label className="block text-base font-medium text-gray-700">
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            {...register("confirmPassword", {
+              required: "Confirm Password is required",
+              validate: (value) =>
+                value === password || "Passwords do not match",
+            })}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+          />
+          {errors.confirmPassword && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.confirmPassword.message}
+            </p>
           )}
         </div>
         <div>
