@@ -32,7 +32,7 @@ const PrivateRoute = () => {
 
   if (isLogin === null)
     return (
-      <div className="flex text-white justify-center h-screen p-24">
+      <div className="flex flex-row text-white justify-center h-screen p-24">
         <div>Attempting to signin, please wait...</div>
         <br />
         <Spinner className="w-24 h-24" />
