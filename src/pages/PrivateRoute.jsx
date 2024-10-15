@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useCreateData } from "../hooks/useApi";
+import { Spinner } from "react-bootstrap";
 
 const PrivateRoute = () => {
   const [isLogin, setIsLogin] = useState(null);
@@ -25,9 +26,17 @@ const PrivateRoute = () => {
     checkLoginStatus();
   }, []);
 
-  if (isLogin === null) {
-    return <div>Loading...</div>;
-  }
+  // if (isLogin === null) {
+  //   return <div>Loading...</div>;
+  // }
+
+  if (isLogin === null)
+    return (
+      <div className="flex justify-center h-screen p-24">
+        <div>Attempting to signin, please wait...</div>
+        <Spinner className="w-24 h-24" />
+      </div>
+    );
 
   return isLogin ? <Outlet /> : <Navigate to="/signin" />;
 };

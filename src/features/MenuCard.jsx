@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 // import { useState, useEffect, useContext } from "react";
 import { CartContext } from "../contexts/CartContext";
 import PropTypes, { object } from "prop-types";
@@ -13,7 +13,8 @@ import { Spinner } from "react-bootstrap";
 
 export default function MenuCard({ data, error, isLoading }) {
   // const [menus, setMenus] = useState([]);
-  const { cartItems, addToCart, removeFromCart } = useContext(CartContext);
+  const { cartItems, getTotalItems, addToCart, removeFromCart } =
+    useContext(CartContext);
   // const [showModal, setShowModal] = useState(false);
 
   // const toggle = () => {
@@ -33,10 +34,9 @@ export default function MenuCard({ data, error, isLoading }) {
   //   setMenus(data); // set the menus in the state to the menus we fetched
   // }
 
-  // useEffect(() => {
-  //   setMenus(data);
-  //   // getMenus();
-  // }, []);
+  useEffect(() => {
+    cartItems;
+  }, [cartItems]);
 
   const notifyAddedToCart = (item) =>
     toast.success(`1 ${item.name} added to cart!`, {
@@ -118,7 +118,7 @@ export default function MenuCard({ data, error, isLoading }) {
             )} */}
         <nav className="navbar navbar-light badge">
           <NavLink className="badge text-lg text-dark" to="/shoppingcart">
-            Cart ({cartItems.length})
+            Cart ({getTotalItems()})
           </NavLink>
         </nav>
       </div>

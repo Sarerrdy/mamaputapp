@@ -18,7 +18,7 @@ import AddNewAddress from "../ui/AddNewAddress";
 const stateAndLga = statesAndLGAs;
 
 export default function Order() {
-  const { cartItems, getCartTotal, orderToken, setOrderToken } =
+  const { cartItems, getTotalItems, getCartTotal, orderToken, setOrderToken } =
     useContext(CartContext);
   const [disable, setDisable] = useState(false);
   const auth = useAuth();
@@ -196,11 +196,10 @@ export default function Order() {
           notifyOrderSuccessful(data);
           setDisable(true);
           setOrderPlacedId(data);
-          setTimeout(() => {
-            setOrderToken("");
-            localStorage.removeItem("order_token");
-            navigate("/OrderSummary");
-          }, 2000); // 2000 milliseconds = 2 seconds
+          setOrderToken("");
+          localStorage.removeItem("order_token");
+          navigate("/OrderSummary");
+          // setTimeout(() => {}, 2000); // 2000 milliseconds = 2 seconds
         },
         onError: (error) => {
           notifyOrderFailure(error);
@@ -246,7 +245,7 @@ export default function Order() {
             <tbody>
               <tr className="bg-gray-100 dark:bg-gray-700">
                 <td className="py-2 px-4 text-xl">Total number of Items:</td>
-                <td className="py-2 px-4 text-xl">{cartItems.length}</td>
+                <td className="py-2 px-4 text-xl">{getTotalItems()}</td>
               </tr>
               <tr className="bg-white dark:bg-gray-800">
                 <td className="py-2 px-4 text-xl">Cost of Items:</td>

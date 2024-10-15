@@ -64,12 +64,17 @@ export const CartProvider = ({ children }) => {
     setCartItems([]); // set the cart items to an empty array
   };
 
-  // get the total items in cart
+  // get the total price items in cart
   const getCartTotal = () => {
     return cartItems.reduce(
       (total, item) => total + item.price * item.quantity,
       0
     ); // calculate the total price of the items in the cart
+  };
+
+  //get the number of items
+  const getTotalItems = () => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
 
   //persist the cart state in the browser
@@ -93,6 +98,7 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         clearCart,
         getCartTotal,
+        getTotalItems,
         orderToken,
         setOrderToken,
       }}
