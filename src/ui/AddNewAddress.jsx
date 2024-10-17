@@ -26,8 +26,7 @@ function AddNewAddress({ stateAndLga, onSave, initialAddress }) {
   const state = watch("state");
 
   const onSubmit = (data) => {
-    const fullNewAddress = `${data.newAddress}, ${data.landmark}, ${data.town}, ${data.lga}, ${data.state}`;
-    onSave(fullNewAddress);
+    onSave(data);
   };
 
   return (

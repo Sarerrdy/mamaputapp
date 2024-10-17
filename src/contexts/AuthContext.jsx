@@ -11,23 +11,12 @@ export const AuthProvider = ({ children }) => {
   const [address, setAddress] = useState(
     localStorage.getItem("site_address") || ""
   );
+  const [addressId, setAddressId] = useState(
+    localStorage.getItem("site_address_id") || 0
+  );
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [returnUrl, setReturnUrl] = useState("");
-
-  // fetch function
-  // async function fetchAction(data, endpoint) {
-  //   const response = await fetch("http://127.0.0.1:5001/api/" + endpoint, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(data),
-  //   });
-  //   const jsonResult = await response.json();
-  //   console.log("AUTH-JSON-RESPONSE", jsonResult);
-  //   return jsonResult;
-  // }
 
   const logOut = () => {
     setUser("");
@@ -35,6 +24,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("site_token");
     localStorage.removeItem("site_user");
     localStorage.removeItem("site_address");
+    localStorage.removeItem("site_address_id");
     setIsAuthenticated(false);
     navigate("/signin");
   };
@@ -48,7 +38,8 @@ export const AuthProvider = ({ children }) => {
         setUser,
         address,
         setAddress,
-        // fetchAction,
+        addressId,
+        setAddressId,
         logOut,
         isAuthenticated,
         setIsAuthenticated,

@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 // import PropTypes from "prop-types";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -81,6 +81,17 @@ const Cart = (showModal) => {
         color: "#fff",
       },
     });
+
+  useEffect(() => {
+    // window.location.reload();
+  }, [
+    cartItems,
+    addToCart,
+    removeFromCart,
+    clearCart,
+    getCartTotal,
+    setOrderToken,
+  ]);
 
   return (
     showModal && (

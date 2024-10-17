@@ -40,46 +40,43 @@ export default function Order() {
   //address states
   const [isChangingAddress, setIsChangingAddress] = useState(false);
   const [address, setAddress] = useState(auth.address);
+  const [addressId, setAddressId] = useState(auth.addressId);
   const [savedAddress, setSavedAddress] = useState("");
+  const [newAddress, setNewAddress] = useState("");
+  const [town, setTown] = useState("");
+  const [state, setState] = useState("");
+  const [lga, setLga] = useState("");
+  const [landmark, setLandmark] = useState("");
   //shipping states
   const [shippingStatus, setShippingStatus] = useState("");
   const [shippedDate, setShippedDate] = useState("");
   const [expectedDeliveryDate, setExpectedDeliveryDate] = useState("");
   const [shippingCost, setShippingCost] = useState(0);
 
-  const [
-    newAddress,
-    setNewAddress,
-    landmark,
-    setLandmark,
-    town,
-    setTown,
-    lga,
-    setLga,
-    state,
-    setState,
-  ] = useState("");
+  // const [newAddress, town, state, lga, landmark] = fullAddress.split(", ");
 
   const handleChangeAddressClick = () => {
     setIsChangingAddress((prev) => !prev);
   };
 
-  const handleAddNewAddress = (fullNewAddress) => {
+  const handleAddNewAddress = (data) => {
+    const fullNewAddress = `${data.newAddress}, ${data.landmark}, ${data.town}, ${data.lga}, ${data.state}`;
+    setNewAddress(data.newAddress);
+    setLandmark(data.landmark);
+    setTown(data.town);
+    setLga(data.lga);
+    setState(data.state);
+    // const addr = `${data.newAddress}, ${data.town}, ${data.state}, ${data.lga}, ${data.landmark}`;
+    // setFullAddress(addr);
     setAddress(fullNewAddress);
     setSavedAddress(fullNewAddress);
-    const [newAddress, landmark, town, lga, state] = fullNewAddress.split(", ");
-    setNewAddress(newAddress);
-    setLandmark(landmark);
-    setTown(town);
-    setLga(lga);
-    setState(state);
+    setAddressId(0);
     setIsChangingAddress(false);
   };
 
   //payment
   const handleOptionChange = (e) => {
     setSelectedPaymentOption(e.target.value);
-    setSelectedShippingOption(e.target.value);
     setAddress(e.target.value);
   };
   //payment
@@ -122,17 +119,18 @@ export default function Order() {
     );
 
   //Generate new address
-  const newAddressArgs = {
+  const addresses = {
+    address_id: addressId,
     address: newAddress,
-    landmark: landmark,
     town: town,
-    lga: lga,
     state: state,
-    user_id: auth.user_id,
+    lga: lga,
+    landmark: landmark,
+    user_id: auth.user.user_id,
   };
 
   //Generate payment details
-  const payment = {
+  const payments = {
     payment_Method: selectedPaymentOption,
     amount: getCartTotal() + shippingCost,
     payment_status: paymentStatus,
@@ -141,21 +139,20 @@ export default function Order() {
   };
 
   //Generate shipping
-  const shipping = {
+  const shipping_info = {
     shipping_Method: selectedShippingOption,
     shipping_cost: shippingCost,
     shipping_status: shippingStatus,
     shipped_date: shippedDate,
     expected_delivery_date: expectedDeliveryDate,
     order_id: 0,
-    address_id: "",
+    address_id: 0,
   };
 
   //initialize shipping and payment state
   const shippingAndPaymentStateInitializer = useCallback(async () => {
     setPaymentDate("");
     setPaymentStatus("Pending");
-    setShippingCost(500);
     setShippingStatus("Pending");
     setShippedDate("");
     setExpectedDeliveryDate("");
@@ -183,7 +180,7 @@ export default function Order() {
   //Generate an order
   let order = {
     total_price: getCartTotal(),
-    status: "available",
+    status: "order received",
     user_id: auth.user.user_id,
   };
 
@@ -198,8 +195,10 @@ export default function Order() {
           setOrderPlacedId(data);
           setOrderToken("");
           localStorage.removeItem("order_token");
-          navigate("/OrderSummary");
-          // setTimeout(() => {}, 2000); // 2000 milliseconds = 2 seconds
+          localStorage.removeItem("cartItems");
+          setTimeout(() => {
+            navigate("/OrderSummary");
+          }, 1000); // 1000 milliseconds = 1 seconds
         },
         onError: (error) => {
           notifyOrderFailure(error);
@@ -211,7 +210,7 @@ export default function Order() {
   const verifyOrderToken = useCallback(async () => {
     try {
       const response = await apiClient.get(`orders?checkerToken=${orderToken}`);
-      console.log("useFetchApi-VERIFIED: ", response.data);
+
       const verifiedStatus = response.data;
       if (orderToken && verifiedStatus !== undefined) {
         setDisable(false);
@@ -224,7 +223,7 @@ export default function Order() {
       setDisable(true);
       navigate("/ShoppingCart");
     }
-  }, [navigate, orderToken]);
+  }, []);
 
   useEffect(() => {
     setLoadIdentifier((prev) => prev + 1); // Update the identifier on each load
@@ -234,6 +233,12 @@ export default function Order() {
     shippingAndPaymentStateInitializer();
     verifyOrderToken();
   }, [verifyOrderToken, loadIdentifier, shippingAndPaymentStateInitializer]); // Depend on loadIdentifier to force re-run
+
+  useEffect(() => {
+    if (selectedShippingOption === "express") setShippingCost(700);
+    if (selectedShippingOption === "standard") setShippingCost(500);
+    if (selectedShippingOption === "pickup") setShippingCost(0);
+  }, [selectedShippingOption]);
 
   return (
     <div className="container mx-auto max-w-screen-lg">
@@ -431,7 +436,6 @@ export default function Order() {
                 checked={selectedShippingOption === "pickup"}
                 onChange={handleShippingOptionChange}
                 className="form-radio11 h-5 w-5 text-green-600"
-                disabled
               />
               <span className="ml-2 text-gray-700">Pickup</span>
             </label>
@@ -449,7 +453,6 @@ export default function Order() {
                 checked={selectedShippingOption === "standard"}
                 onChange={handleShippingOptionChange}
                 className="form-radio h-5 w-5 text-green-600"
-                disabled
               />
               <span className="ml-2 text-gray-700">Standard delivery</span>
             </label>
@@ -487,9 +490,9 @@ export default function Order() {
                 PostNewOrder({
                   order,
                   order_details,
-                  newAddressArgs,
-                  payment,
-                  shipping,
+                  addresses,
+                  payments,
+                  shipping_info,
                 });
               } else {
                 navigate("/ShoppingCart");

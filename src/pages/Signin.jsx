@@ -75,7 +75,7 @@ const LoginForm = () => {
     try {
       let authToken = res[0];
       let authUser = res[1];
-      let authAdress =
+      let authAddress =
         res[2]["address"] +
         ", " +
         res[2]["landmark"] +
@@ -85,16 +85,19 @@ const LoginForm = () => {
         res[2]["lga"] +
         ", " +
         res[2]["state"];
+      let authAddressId = res[2]["address_id"];
 
       if (authUser) {
         auth.setUser(authUser);
         auth.setToken(authToken);
-        auth.setAddress(authAdress);
+        auth.setAddress(authAddress);
+        auth.setAddressId(authAddressId);
         localStorage.setItem("site_user", JSON.stringify(authUser));
-        localStorage.setItem("site_address", JSON.stringify(authAdress));
+        localStorage.setItem("site_address", JSON.stringify(authAddress));
         localStorage.setItem("site_token", authToken);
+        localStorage.setItem("site_address_id", authAddressId);
         auth.setIsAuthenticated(true);
-        if (auth.returnUrl == "/checkout") navigate("/shoppingcart");
+        // if (auth.returnUrl == "/checkout") navigate("/shoppingcart");
         if (auth.returnUrl !== "") navigate(auth.returnUrl);
         if (auth.returnUrl == "") navigate("/");
         // return <Outlet />;
