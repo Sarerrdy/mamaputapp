@@ -1,23 +1,16 @@
 // import { useContext, useEffect, useState } from "react";
-import { useEffect, Fragment } from "react";
-import { NavLink } from "react-router-dom";
-// import { CartContext } from "../contexts/CartContext";
-import { useAuth } from "../contexts/AuthContext";
-// import { OrderCtx } from "../contexts/OrderContext";
+import { Fragment } from "react";
+// import { useAuth } from "../contexts/AuthContext";
 
-export default function OrderDetails({ data, error, isLoading }) {
-  // const { getCartTotal, getTotalItems } = useContext(CartContext);
-  const auth = useAuth();
-  const shippingCost = 500;
-
+export default function OrderDetails({ data }) {
+  // const auth = useAuth();
+  // auth.setReturnUrl(window.location.pathname);
   let orders = [];
   if (Array.isArray(data)) {
     orders = data;
   } else if (typeof data === "object") {
     orders = [data];
   }
-
-  // useEffect(() => {}, []);
 
   return (
     <div
@@ -247,14 +240,6 @@ export default function OrderDetails({ data, error, isLoading }) {
           </div>
         </Fragment>
       ))}
-      <div className="flex justify-center">
-        <NavLink
-          className="px-6 py-3 bg-blue-600 text-white text-lg font-bold uppercase rounded hover:bg-blue-500 focus:outline-none focus:bg-blue-500"
-          to="/"
-        >
-          Return Home
-        </NavLink>
-      </div>
     </div>
   );
 }

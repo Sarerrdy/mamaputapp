@@ -1,40 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import OrderDetails from "../features/OrderDetails";
 import { OrderCtx } from "../contexts/OrderContext";
 import { useFetchData } from "../hooks/useApi";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function OrderSummary() {
   const { orderPlacedId } = OrderCtx();
   const { data, error, isLoading } = useFetchData(`orders/${orderPlacedId}`);
   const navigate = useNavigate();
+  const auth = useAuth();
 
   useEffect(() => {
-    if (error) {
-      return (
-        <div className="container min-h-screen h-full bg-body-secondary">
-          <span className="flex-row">
-            Something went wrong!! Here is the error: {error}
-          </span>
-          <span className="flex-row">
-            <strong>
-              Attention: Kindly check your order history before placing this
-              order again!!!
-            </strong>
-          </span>
-          {
-            setTimeout(() => {
-              navigate("/");
-            }, 2000) // 1000 milliseconds = 1 seconds
-          }
-        </div>
-      );
-    }
-
     if (!orderPlacedId || orderPlacedId === 0) {
       return navigate("/");
     }
-  }, [error, navigate, orderPlacedId]);
+  }, [auth.returnUrl, error, navigate, orderPlacedId]);
 
   return (
     <div className="container min-h-screen h-full bg-body-secondary">
@@ -43,6 +24,14 @@ export default function OrderSummary() {
         error={error}
         isLoading={isLoading}
       ></OrderDetails>
+      <div className="flex justify-center">
+        <NavLink
+          className="px-6 py-3 bg-blue-600 text-white text-lg font-bold uppercase rounded hover:bg-blue-500 focus:outline-none focus:bg-blue-500"
+          to={auth.returnUrl}
+        >
+          {auth.returnUrl === "/profile" ? "Return to Profile" : "Return Home"}
+        </NavLink>
+      </div>
     </div>
   );
 }

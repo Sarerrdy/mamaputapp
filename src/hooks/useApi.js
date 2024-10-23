@@ -46,58 +46,34 @@ export const useCreateData = (endpoint) => {
   );
 };
 
-// Create data
-export const useCreateData1 = (endpoint) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    // queryKey:[endpoint],
-    mutationFn: async (newData) => {      
-      const { data } = await apiClient.post(endpoint, newData);
-      console.log("RETURN MUTATION-1", data)   
-      return data;
-    },
-    
-      onSuccess: (data1) => {
-        queryClient.invalidateQueries([endpoint]);
-       console.log("RETURN MUTATION-2", data1)      
-      //  setOrderDetails("data")
-      },
-      onError: (error) => {
-        console.error('ERROR FROM useAPI MUTATION:', error);    
-    }
-    }    
-  );
-  
-};
 
 // Update data
 export const useUpdateData = (endpoint) => {
   const queryClient = useQueryClient();
-  return useMutation(
-    async ({ id, updatedData }) => {
+  return useMutation({
+    mutationFn: async ({ id, updatedData }) => {       
       const { data } = await apiClient.put(`${endpoint}/${id}`, updatedData);
       return data;
     },
-    {
-      onSuccess: () => {
+    
+      onSuccess: (data) => {
+        console.log('useUPDATE User :', data);  
         queryClient.invalidateQueries([endpoint]);
       },
-    }
-  );
+    });
 };
 
 // Delete data
 export const useDeleteData = (endpoint) => {
   const queryClient = useQueryClient();
-  return useMutation(
-    async (id) => {
+  return useMutation({
+    mutationFn: async (id) => {
       const { data } = await apiClient.delete(`${endpoint}/${id}`);
       return data;
-    },
-    {
+    },    
       onSuccess: () => {
         queryClient.invalidateQueries([endpoint]);
       },
-    }
-  );
+    
+});
 };

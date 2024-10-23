@@ -49,9 +49,9 @@ function App() {
                   <Route path="shoppingcart" element={<ShoppingCart />} />
                   <Route path="signin" element={<Signin />} />
                   <Route path="admin" element={<Admin />} />
-                  <Route path="profile" element={<Profile />} />
                   <Route path="register" element={<Register />} />
                   <Route element={<PrivateRoute />}>
+                    <Route path="profile" element={<Profile />} />
                     <Route path="checkout" element={<Checkout />} />
                     <Route path="ordersummary" element={<OrderSummary />} />
                   </Route>

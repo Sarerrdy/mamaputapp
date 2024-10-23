@@ -63,12 +63,12 @@ const RegistrationForm = () => {
           user: data,
         });
 
-        if (response == data["email"]) notifySuccessful(response);
-        {
+        if (response == data["email"]) {
+          notifySuccessful(response);
           reset();
-          auth.logOut();
-          // setTimeout(() => {
-          // }, 2000);
+          setTimeout(() => {
+            auth.logOut();
+          }, 1000);
         }
       } catch (error) {
         console.error("something when wrong", error);

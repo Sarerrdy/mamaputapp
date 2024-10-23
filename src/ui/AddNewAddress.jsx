@@ -16,10 +16,10 @@ function AddNewAddress({ stateAndLga, onSave, initialAddress }) {
       const [newAddress, landmark, town, lga, state] =
         initialAddress.split(", ");
       setValue("newAddress", newAddress);
-      setValue("town", town);
-      setValue("lga", lga);
-      setValue("state", state);
       setValue("landmark", landmark);
+      setValue("town", town);
+      setValue("state", state);
+      setValue("lga", lga);
     }
   }, [initialAddress, setValue]);
 

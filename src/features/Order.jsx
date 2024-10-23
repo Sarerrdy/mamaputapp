@@ -18,73 +18,59 @@ import AddNewAddress from "../ui/AddNewAddress";
 const stateAndLga = statesAndLGAs;
 
 export default function Order() {
-  const { cartItems, getTotalItems, getCartTotal, orderToken, setOrderToken } =
-    useContext(CartContext);
-  const [disable, setDisable] = useState(false);
+  //general context, states, and hooks
   const auth = useAuth();
-  const { setOrderPlacedId } = OrderCtx();
   const navigate = useNavigate();
 
+  const { cartItems, getTotalItems, getCartTotal, orderToken, setOrderToken } =
+    useContext(CartContext); //cart states
+
+  const [disable, setDisable] = useState(false); // make an order button state
+
+  auth.setReturnUrl("/"); // return home after completing order
+
+  const { setOrderPlacedId } = OrderCtx(); //order id use to view fetch order details
+
   const { data: verifyToken } = useFetchData(
-    `orders?checkerToken=${orderToken}` //verify token state
-  );
-  const { mutateAsync, isLoading } = useCreateData("orders");
-  const [loadIdentifier, setLoadIdentifier] = useState(0);
+    `orders?checkerToken=${orderToken}`
+  ); //verify token to manage order state
+
+  const { mutateAsync: CreateAnOrderAsync, isLoading } =
+    useCreateData("orders"); // create order hook
+
+  const [loadIdentifier, setLoadIdentifier] = useState(0); //use to track page reload
+
   //payment states
   const [selectedPaymentOption, setSelectedPaymentOption] =
     useState("payondelivery");
-  const [selectedShippingOption, setSelectedShippingOption] =
-    useState("express");
   const [paymentStatus, setPaymentStatus] = useState("");
   const [paymentDate, setPaymentDate] = useState("");
+
   //address states
   const [isChangingAddress, setIsChangingAddress] = useState(false);
-  const [address, setAddress] = useState(auth.address);
-  const [addressId, setAddressId] = useState(auth.addressId);
-  const [savedAddress, setSavedAddress] = useState("");
+  const [addressesArr] = useState(auth.addresses); // fetch list of user addresses from context
+  const [addressId, setAddressId] = useState(0); // use to track new or existing address
+  const [savedAddress, setSavedAddress] = useState(""); // manage newly generated address
+  const [rawNewAddressData, setRawNewAddressData] = useState(""); // use to re-assign selected shipping address
+
+  // selected address for shipping
   const [newAddress, setNewAddress] = useState("");
   const [town, setTown] = useState("");
   const [state, setState] = useState("");
   const [lga, setLga] = useState("");
   const [landmark, setLandmark] = useState("");
+
+  const [selectedAddress, setSelectedAddress] = useState(""); // manage selected address state
+
   //shipping states
+  const [selectedShippingOption, setSelectedShippingOption] =
+    useState("express");
   const [shippingStatus, setShippingStatus] = useState("");
   const [shippedDate, setShippedDate] = useState("");
   const [expectedDeliveryDate, setExpectedDeliveryDate] = useState("");
   const [shippingCost, setShippingCost] = useState(0);
 
-  // const [newAddress, town, state, lga, landmark] = fullAddress.split(", ");
-
-  const handleChangeAddressClick = () => {
-    setIsChangingAddress((prev) => !prev);
-  };
-
-  const handleAddNewAddress = (data) => {
-    const fullNewAddress = `${data.newAddress}, ${data.landmark}, ${data.town}, ${data.lga}, ${data.state}`;
-    setNewAddress(data.newAddress);
-    setLandmark(data.landmark);
-    setTown(data.town);
-    setLga(data.lga);
-    setState(data.state);
-    // const addr = `${data.newAddress}, ${data.town}, ${data.state}, ${data.lga}, ${data.landmark}`;
-    // setFullAddress(addr);
-    setAddress(fullNewAddress);
-    setSavedAddress(fullNewAddress);
-    setAddressId(0);
-    setIsChangingAddress(false);
-  };
-
-  //payment
-  const handleOptionChange = (e) => {
-    setSelectedPaymentOption(e.target.value);
-    setAddress(e.target.value);
-  };
-  //payment
-  const handleShippingOptionChange = (e) => {
-    setSelectedShippingOption(e.target.value);
-  };
-  ///Toast
-
+  ///success Toast
   const notifyOrderSuccessful = (results) =>
     toast.success(`Your Order #${results} was placed sucessfully`, {
       position: "top-center",
@@ -99,7 +85,7 @@ export default function Order() {
         color: "#ffffff",
       },
     });
-
+  //Failure/error Toast
   const notifyOrderFailure = (results) =>
     toast.error(
       `Your Order placement failed with the following error ${results}`,
@@ -118,8 +104,36 @@ export default function Order() {
       }
     );
 
+  //hides and unhides addNewAddress componet
+  const handleChangeAddressClick = () => {
+    setIsChangingAddress((prev) => !prev);
+  };
+
+  //handle new address generation
+  const handleAddNewAddress = (data) => {
+    const fullNewAddress = `${data.newAddress}, ${data.landmark}, ${data.town}, ${data.lga}, ${data.state}`;
+
+    setAddressId(0);
+    setNewAddress(data.newAddress);
+    setLandmark(data.landmark);
+    setTown(data.town);
+    setLga(data.lga);
+    setState(data.state);
+
+    setRawNewAddressData(data); // use to re-format selected shipping address
+    setSelectedAddress(fullNewAddress);
+    setSavedAddress(fullNewAddress);
+    setAddressId(0);
+    setIsChangingAddress(false);
+  };
+
+  // handles changes in group of adresses radio button
+  const handleAddressOptionChange = (e) => {
+    setSelectedAddress(e.target.value);
+  };
+
   //Generate new address
-  const addresses = {
+  const orderAddress = {
     address_id: addressId,
     address: newAddress,
     town: town,
@@ -127,6 +141,16 @@ export default function Order() {
     lga: lga,
     landmark: landmark,
     user_id: auth.user.user_id,
+  };
+
+  //handle changes in payment group of radio button
+  const handlePaymentOptionChange = (e) => {
+    setSelectedPaymentOption(e.target.value);
+  };
+
+  //handle changes in shipping group of radio button
+  const handleShippingOptionChange = (e) => {
+    setSelectedShippingOption(e.target.value);
   };
 
   //Generate payment details
@@ -186,7 +210,7 @@ export default function Order() {
 
   //post a new order
   const PostNewOrder = async (newOrder) => {
-    await mutateAsync(
+    await CreateAnOrderAsync(
       { orders: newOrder },
       {
         onSuccess: (data) => {
@@ -207,6 +231,7 @@ export default function Order() {
     );
   };
 
+  // fetch and handle token to track an order session
   const verifyOrderToken = useCallback(async () => {
     try {
       const response = await apiClient.get(`orders?checkerToken=${orderToken}`);
@@ -234,6 +259,7 @@ export default function Order() {
     verifyOrderToken();
   }, [verifyOrderToken, loadIdentifier, shippingAndPaymentStateInitializer]); // Depend on loadIdentifier to force re-run
 
+  //Temporarily sets the shipping price
   useEffect(() => {
     if (selectedShippingOption === "express") setShippingCost(700);
     if (selectedShippingOption === "standard") setShippingCost(500);
@@ -297,24 +323,39 @@ export default function Order() {
             Delivery Address Summary
           </div>
           <div className="text-xl mb-2">
-            <strong>Address(s):</strong>
+            <strong>Addresses:</strong>
             <br />
             <br />
             <div className="space-y-4">
-              <label
-                htmlFor="authAddress"
-                className="flex items-center cursor-pointer shadow-lg p-4 rounded bg-white border border-gray-200"
-              >
-                <input
-                  type="radio"
-                  id="authAddress"
-                  value={auth.address}
-                  checked={address === auth.address}
-                  onChange={handleOptionChange}
-                  className="form-radio h-5 w-5 text-green-600"
-                />
-                <span className="ml-2 text-gray-700">{auth.address}</span>
-              </label>
+              {addressesArr?.map((addr, index) => (
+                <label
+                  key={index}
+                  htmlFor={`authAddress${index}`}
+                  className="flex items-center cursor-pointer shadow-lg p-4 rounded bg-white border border-gray-200"
+                >
+                  <input
+                    type="radio"
+                    id={`authAddress${index}`}
+                    name="authAddress"
+                    value={addr.address}
+                    checked={selectedAddress === addr.address}
+                    onChange={handleAddressOptionChange}
+                    onClick={() => {
+                      setAddressId(addr.address_id);
+                      setNewAddress(addr.address);
+                      setLandmark(addr.landmark);
+                      setTown(addr.town);
+                      setLga(addr.lga);
+                      setState(addr.state);
+                    }}
+                    className="form-radio h-5 w-5 text-green-600"
+                  />
+                  <span className="ml-2 text-gray-700">
+                    {`${addr.address}, ${addr.landmark}, ${addr.town}, ${addr.lga}, ${addr.state}`}
+                  </span>
+                </label>
+              ))}
+
               <br />
               {savedAddress && (
                 <label
@@ -325,8 +366,16 @@ export default function Order() {
                     type="radio"
                     id="savedAddress"
                     value={savedAddress}
-                    checked={address === savedAddress}
-                    onChange={handleOptionChange}
+                    checked={selectedAddress === savedAddress}
+                    onChange={handleAddressOptionChange}
+                    onClick={() => {
+                      setAddressId(0);
+                      setNewAddress(rawNewAddressData.newAddress);
+                      setLandmark(rawNewAddressData.landmark);
+                      setTown(rawNewAddressData.town);
+                      setLga(rawNewAddressData.lga);
+                      setState(rawNewAddressData.state);
+                    }}
                     className="form-radio h-5 w-5 text-green-600"
                   />
                   <span className="ml-2 text-gray-700">{savedAddress}</span>
@@ -371,7 +420,7 @@ export default function Order() {
                 id="creditCard"
                 value="Credit Card"
                 checked={selectedPaymentOption === "Credit Card"}
-                onChange={handleOptionChange}
+                onChange={handlePaymentOptionChange}
                 className="form-radio h-5 w-5 text-green-600"
                 disabled
               />
@@ -389,7 +438,7 @@ export default function Order() {
                 id="bankTransfer"
                 value="Bank Transfer"
                 checked={selectedPaymentOption === "Bank Transfer"}
-                onChange={handleOptionChange}
+                onChange={handlePaymentOptionChange}
                 className="form-radio h-5 w-5 text-green-600"
                 disabled
               />
@@ -407,10 +456,10 @@ export default function Order() {
                 id="payondelivery"
                 value="payondelivery"
                 checked={selectedPaymentOption === "payondelivery"}
-                onChange={handleOptionChange}
+                onChange={handlePaymentOptionChange}
                 className="form-radio h-5 w-5 text-green-600"
               />
-              <span className="ml-2 text-gray-700">pay on delivery</span>
+              <span className="ml-2 text-gray-700">pay on Delivery</span>
             </label>
           </div>
           {/* <button
@@ -485,12 +534,11 @@ export default function Order() {
             } m-3 w-1/4`}
             onClick={() => {
               const isValid = verifyToken;
-              console.log("IsValid", isValid);
               if (isValid) {
                 PostNewOrder({
                   order,
                   order_details,
-                  addresses,
+                  orderAddress,
                   payments,
                   shipping_info,
                 });

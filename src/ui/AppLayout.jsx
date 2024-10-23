@@ -85,7 +85,7 @@ function AppLayout() {
                   Sure Destination for delicious African cuisine
                 </h4>
                 <h4 className="mb-2 font-semibold">
-                  Place your Order now your food for quick delivery
+                  Place an Order now for a quick delivery
                 </h4>
               </div>
             </div>
@@ -96,7 +96,7 @@ function AppLayout() {
         <Outlet />
       </div>
       <div className="container text-white align-bottom mt-4 pb-5">
-        <p className="place-content-end">CopyRight(c) 2024</p>
+        <p className="place-content-end">© 2024 Copyright</p>
       </div>
     </div>
   );
