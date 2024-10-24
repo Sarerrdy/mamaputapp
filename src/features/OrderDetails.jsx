@@ -14,11 +14,11 @@ export default function OrderDetails({ data }) {
 
   return (
     <div
-      className="container mx-auto lg:w-3/4 p-6 bg-gray-100 dark:bg-gray-900 rounded-lg shadow-lg"
+      className="container mx-auto lg:w-3/4 p-6 bg-gray-100 rounded-lg shadow-lg"
       id="order_summary"
     >
-      <div className="bg-gray-100 dark:bg-gray-700 p-6 rounded-lg shadow-lg mb-6">
-        <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-4">
+      <div className="bg-gray-100  p-6 rounded-lg shadow-lg mb-6">
+        <div className="text-3xl font-bold text-green-600 mb-4">
           Your Order was placed successfully!! Please check your order details
           below
         </div>
@@ -34,13 +34,10 @@ export default function OrderDetails({ data }) {
         <Fragment key={order.order_id}>
           {/* summary begins */}
 
-          <div className="bg-gray-100 p-6 rounded-lg shadow-lg mb-6">
+          <div className="bg-gray-100 overflow-x-auto p-6 rounded-lg shadow-lg mb-6">
             <div className="text-3xl font-bold mb-4">Order Summary</div>
 
-            <table
-              className="min-w-full bg-white border dark:bg-gray-800"
-              key={order.order_id}
-            >
+            <table className="min-w-full bg-white border" key={order.order_id}>
               <thead>
                 <tr>
                   <th className="py-2 px-4 border-b">Item</th>
@@ -69,15 +66,15 @@ export default function OrderDetails({ data }) {
             <hr />
             <br />
             <div className="flex-row">
-              <div className="row bg-white dark:bg-gray-700">
+              <div className="row bg-white ">
                 <div className="col-sm-3 py-2 px-4 text-xl">Order number:</div>
                 <div className="col py-2 px-4 text-xl">#{order.order_id}</div>
               </div>
-              <div className="row bg-gray-100 dark:bg-gray-700">
+              <div className="row bg-gray-100 ">
                 <div className="col-sm-3 py-2 px-4 text-xl">Order status:</div>
                 <div className="col py-2 px-4 text-xl">{order.status}</div>
               </div>
-              <div className="row bg-white dark:bg-gray-700">
+              <div className="row bg-white ">
                 <div className="col-sm-3 py-2 px-4 text-xl">
                   Total number of Items:
                 </div>
@@ -88,13 +85,13 @@ export default function OrderDetails({ data }) {
                   )}
                 </div>
               </div>
-              <div className="row bg-gray-100 dark:bg-gray-800">
+              <div className="row bg-gray-100">
                 <div className="col-sm-3 py-2 px-4 text-xl">Cost of Items:</div>
                 <div className="col py-2 px-4 text-xl">
                   ₦ {order.total_price}
                 </div>
               </div>
-              <div className="row bg-white dark:bg-gray-700">
+              <div className="row bg-white ">
                 <div className="col-sm-3 py-2 px-4 text-xl">
                   Cost of delivery:
                 </div>
@@ -102,7 +99,7 @@ export default function OrderDetails({ data }) {
                   ₦ {order.shipping_info.shipping_cost}
                 </div>
               </div>
-              <div className="row bg-gray-100 dark:bg-gray-700">
+              <div className="row bg-gray-100 ">
                 <div className="col-sm-3 py-2 px-4 text-xl">
                   <strong>Total cost: </strong>
                 </div>
@@ -114,22 +111,22 @@ export default function OrderDetails({ data }) {
               </div>
             </div>
           </div>
-          <div className="bg-gray-100 dark:bg-gray-700 p-6 rounded-lg shadow-lg mb-6">
+          <div className="bg-gray-100  p-6 rounded-lg shadow-lg mb-6">
             <div className="text-3xl font-bold mb-4">Payment Summary</div>
             <div className="flex-row">
-              <div className="row bg-white dark:bg-gray-700">
+              <div className="row bg-white ">
                 <div className="col-sm-3 py-2 px-4 text-xl">Payment Id:</div>
                 <div className="col py-2 px-4 text-xl">
                   {order.payment.payment_id}
                 </div>
               </div>
-              <div className="row bg-gray-100 dark:bg-gray-700">
+              <div className="row bg-gray-100 ">
                 <div className="col-sm-3 py-2 px-4 text-xl">Amount:</div>
                 <div className="col py-2 px-4 text-xl">
                   {order.payment.amount}
                 </div>
               </div>
-              <div className="row bg-white dark:bg-gray-700">
+              <div className="row bg-white ">
                 <div className="col-sm-3 py-2 px-4 text-xl">
                   Mode of payment:
                 </div>
@@ -137,7 +134,7 @@ export default function OrderDetails({ data }) {
                   {order.payment.payment_Method}
                 </div>
               </div>
-              <div className="row bg-gray-100 dark:bg-gray-700">
+              <div className="row bg-gray-100 ">
                 <div className="col-sm-3 py-2 px-4 text-xl">
                   Payment Status:
                 </div>
@@ -146,7 +143,7 @@ export default function OrderDetails({ data }) {
                 </div>
               </div>
               {order.payment.payment_status === "received" ? (
-                <div className="row bg-white dark:bg-gray-700">
+                <div className="row bg-white ">
                   <div className="col-sm-3 py-2 px-4 text-xl">
                     Payment date:
                   </div>
@@ -155,7 +152,7 @@ export default function OrderDetails({ data }) {
                   </div>
                 </div>
               ) : (
-                <div className="row bg-white dark:bg-gray-700">
+                <div className="row bg-white ">
                   <div className="col-sm-3 py-2 px-4 text-xl">
                     Payment date:
                   </div>
@@ -165,16 +162,16 @@ export default function OrderDetails({ data }) {
             </div>
           </div>
 
-          <div className="bg-gray-100 dark:bg-gray-700 p-6 rounded-lg shadow-lg mb-6">
+          <div className="bg-gray-100  p-6 rounded-lg shadow-lg mb-6">
             <div className="text-3xl font-bold mb-4">Shipping Summary</div>
             <div className="flex-row ">
-              <div className="row bg-white dark:bg-gray-700">
+              <div className="row bg-white ">
                 <div className="col-sm-3 py-2 px-4 text-xl">Shipping Id:</div>
                 <div className="col py-2 px-4 text-xl">
                   {order.shipping_info.shipping_info_id}
                 </div>
               </div>
-              <div className="row bg-gray-100 dark:bg-gray-700">
+              <div className="row bg-gray-100 ">
                 <div className="col-sm-3 py-2 px-4 text-xl">
                   Shipping Address:
                 </div>
@@ -190,7 +187,7 @@ export default function OrderDetails({ data }) {
                     order.shipping_info.address.state}
                 </div>
               </div>
-              <div className="row bg-white dark:bg-gray-700">
+              <div className="row bg-white ">
                 <div className="col-sm-3 py-2 px-4 text-xl">
                   Shipping Method:
                 </div>
@@ -198,7 +195,7 @@ export default function OrderDetails({ data }) {
                   {order.shipping_info.shipping_Method}
                 </div>
               </div>
-              <div className="row bg-gray-100 dark:bg-gray-700">
+              <div className="row bg-gray-100 ">
                 <div className="col-sm-3 py-2 px-4 text-xl">
                   Shipping status:
                 </div>
@@ -207,7 +204,7 @@ export default function OrderDetails({ data }) {
                 </div>
               </div>
               {order.shipping_info.shipping_status === "shipped" ? (
-                <div className="row bg-white dark:bg-gray-700">
+                <div className="row bg-white ">
                   <div className="col-sm-3 py-2 px-4 text-xl">
                     Date shipped:
                   </div>
@@ -216,7 +213,7 @@ export default function OrderDetails({ data }) {
                   </div>
                 </div>
               ) : (
-                <div className="row bg-white dark:bg-gray-700">
+                <div className="row bg-white ">
                   <div className="col-sm-3 py-2 px-4 text-xl">
                     Date shipped:
                   </div>
@@ -224,7 +221,7 @@ export default function OrderDetails({ data }) {
                 </div>
               )}
 
-              <div className="row bg-gray-100 dark:bg-gray-700">
+              <div className="row bg-gray-100 ">
                 <div className="col-sm-3 py-2 px-4 text-xl">
                   Expected date of delivery:
                 </div>

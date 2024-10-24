@@ -70,40 +70,6 @@ export default function Order() {
   const [expectedDeliveryDate, setExpectedDeliveryDate] = useState("");
   const [shippingCost, setShippingCost] = useState(0);
 
-  ///success Toast
-  const notifyOrderSuccessful = (results) =>
-    toast.success(`Your Order #${results} was placed sucessfully`, {
-      position: "top-center",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "colored",
-      style: {
-        backgroundColor: "#05b858",
-        color: "#ffffff",
-      },
-    });
-  //Failure/error Toast
-  const notifyOrderFailure = (results) =>
-    toast.error(
-      `Your Order placement failed with the following error ${results}`,
-      {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "colored",
-        style: {
-          backgroundColor: "#b9220e",
-          color: "#fff",
-        },
-      }
-    );
-
   //hides and unhides addNewAddress componet
   const handleChangeAddressClick = () => {
     setIsChangingAddress((prev) => !prev);
@@ -214,7 +180,9 @@ export default function Order() {
       { orders: newOrder },
       {
         onSuccess: (data) => {
-          notifyOrderSuccessful(data);
+          auth.notifyOrderSuccessful(
+            `order was successfully placed with order number #${data}`
+          );
           setDisable(true);
           setOrderPlacedId(data);
           setOrderToken("");
@@ -225,7 +193,9 @@ export default function Order() {
           }, 1000); // 1000 milliseconds = 1 seconds
         },
         onError: (error) => {
-          notifyOrderFailure(error);
+          auth.notifyOrderFailure(
+            `order failed with the following error: ${error}`
+          );
         },
       }
     );
@@ -269,36 +239,74 @@ export default function Order() {
   return (
     <div className="container mx-auto max-w-screen-lg">
       <ToastContainer />
-      <div className="container mx-auto p-6 bg-gray-100 dark:bg-gray-900 rounded-lg shadow-lg">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+      <div className="container mx-auto p-6 bg-gray-100  rounded-lg shadow-lg">
+        <div className="bg-white overflow-x-auto  p-6 rounded-lg shadow-md mb-6">
           <div className="text-3xl font-bold mb-4">Order Summary</div>
-          <table className="min-w-full bg-white dark:bg-gray-800">
+
+          {/* <div className="text-3xl font-bold mb-4">Order Summary</div> */}
+
+          <table className="min-w-full bg-white border " key={order.order_id}>
+            <thead>
+              <tr>
+                <th className="py-2 px-4 border-b">Item</th>
+                <th className="py-2 px-4 border-b">Price</th>
+                <th className="py-2 px-4 border-b">Quantity</th>
+                <th className="py-2 px-4 border-b">Cost</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr className="bg-gray-100 dark:bg-gray-700">
-                <td className="py-2 px-4 text-xl">Total number of Items:</td>
-                <td className="py-2 px-4 text-xl">{getTotalItems()}</td>
-              </tr>
-              <tr className="bg-white dark:bg-gray-800">
-                <td className="py-2 px-4 text-xl">Cost of Items:</td>
-                <td className="py-2 px-4 text-xl">₦{getCartTotal()}</td>
-              </tr>
-              <tr className="bg-gray-100 dark:bg-gray-700">
-                <td className="py-2 px-4 text-xl">Cost of delivery:</td>
-                <td className="py-2 px-4 text-xl">₦{shippingCost}</td>
-              </tr>
+              {cartItems?.map((item, index) => (
+                <tr
+                  key={item.order_details_id}
+                  className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
+                >
+                  <td className="py-2 px-4 text-xl">{item.name}</td>
+                  <td className="py-2 px-4 text-xl">₦ {item.price}</td>
+                  <td className="py-2 px-4 text-xl">{item.quantity}</td>
+                  <td className="py-2 px-4 text-xl">
+                    ₦ {item.price * item.quantity}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
-          <div className="mt-6 p-4 bg-gray-200 dark:bg-gray-700 rounded-lg shadow-inner">
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              Total:
-            </div>
-            <div className="text-4xl font-extrabold text-red-600 dark:text-red-400">
+
+          <br />
+          <br />
+
+          <div className="lg:w-1/3">
+            <table className="min-w-full bg-white ">
+              <tbody>
+                <tr className="bg-gray-100 ">
+                  <td className="py-2 px-4 text-xl">Total number of Items:</td>
+                  <td className="py-2 px-4 text-xl">
+                    <strong>{getTotalItems()}</strong>
+                  </td>
+                </tr>
+                <tr className="bg-white ">
+                  <td className="py-2 px-4 text-xl">Cost of Items:</td>
+                  <td className="py-2 px-4 text-xl">
+                    <strong>₦{getCartTotal()}</strong>
+                  </td>
+                </tr>
+                <tr className="bg-gray-100 ">
+                  <td className="py-2 px-4 text-xl">Cost of delivery:</td>
+                  <td className="py-2 px-4 text-xl">
+                    <strong>₦{shippingCost}</strong>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="mt-6 p-4 bg-gray-200  rounded-lg shadow-inner">
+            <div className="text-2xl font-bold text-gray-900 ">Total:</div>
+            <div className="text-4xl font-extrabold text-red-600">
               ₦{getCartTotal() + shippingCost}
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+        <div className="bg-white  p-6 rounded-lg shadow-md mb-6">
           <div className="text-3xl font-bold mb-4">Changed your mind?</div>
           <NavLink
             className={`px-4 py-2  text-white text-base font-bold uppercase rounded ${
@@ -318,7 +326,7 @@ export default function Order() {
 
         {/* address section */}
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+        <div className="bg-white  p-6 rounded-lg shadow-md mb-6">
           <div className="text-3xl font-bold mb-4">
             Delivery Address Summary
           </div>
@@ -408,7 +416,7 @@ export default function Order() {
         </div>
 
         {/* payment section */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+        <div className="bg-white  p-6 rounded-lg shadow-md mb-6">
           <h2 className="text-3xl font-bold mb-4">Choose Method of Payment</h2>
           <div>
             <label
@@ -462,16 +470,10 @@ export default function Order() {
               <span className="ml-2 text-gray-700">pay on Delivery</span>
             </label>
           </div>
-          {/* <button
-            onClick={handleSubmit}
-            className="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition duration-300"
-          >
-            Proceed
-          </button> */}
         </div>
 
         {/* Shipping section */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+        <div className="bg-white  p-6 rounded-lg shadow-md mb-6">
           <h2 className="text-3xl font-bold mb-4">Choose shipping Method</h2>
           <div>
             <label
@@ -535,13 +537,19 @@ export default function Order() {
             onClick={() => {
               const isValid = verifyToken;
               if (isValid) {
-                PostNewOrder({
-                  order,
-                  order_details,
-                  orderAddress,
-                  payments,
-                  shipping_info,
-                });
+                if (orderAddress.address) {
+                  PostNewOrder({
+                    order,
+                    order_details,
+                    orderAddress,
+                    payments,
+                    shipping_info,
+                  });
+                } else {
+                  auth.notifyOrderFailure(
+                    "Please select or add a delivery address!!"
+                  );
+                }
               } else {
                 navigate("/ShoppingCart");
               }

@@ -5,11 +5,13 @@ import { useUpdateData, useCreateData, useDeleteData } from "../hooks/useApi";
 import { useAuth } from "../contexts/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
 
 const ProfileComponent = ({ user, address, stateAndLga }) => {
   //address
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState("");
+  const [editingAddressId, setEditingAddressId] = useState(null); // manage edit address toggle state
   const [addressId, setAddressId] = useState(0);
   const [addresses, setAddresses] = useState(address);
   const [isChangingAddress, setIsChangingAddress] = useState(false);
@@ -52,22 +54,27 @@ const ProfileComponent = ({ user, address, stateAndLga }) => {
 
   // address
   const handleAddAddress = () => {
-    setEditingAddress("");
-    setIsAddingAddress((prev) => !prev); //toggle button
-    setIsAddressModalOpen(true);
+    setIsAddingAddress((prev) => !prev); // Toggle button
+    setEditingAddress(""); // Clear the editing address state
+    setEditingAddressId(null); // Clear the editing address ID
+    setIsAddressModalOpen(true); // Open the modal
   };
 
+  // const handleEditAddress = (address, editBtnId) => {
   const handleEditAddress = (address) => {
-    setIsChangingAddress((prev) => !prev); //toggle button
-    const addressString = `${address.address}, ${address.landmark}, ${address.town}, ${address.lga}, ${address.state}`;
-    setAddressId(address.address_id);
-    setEditingAddress(addressString);
-    setIsAddressModalOpen(true);
+    setIsChangingAddress((prev) => !prev); // Toggle button
+    if (editingAddressId === address.address_id) {
+      setEditingAddressId(null); // Clear the editing address ID
+      setIsAddressModalOpen(false); // Close the modal
+    } else {
+      setEditingAddressId(address.address_id); // Set the editing address ID
+      const addressString = `${address.address}, ${address.landmark}, ${address.town}, ${address.lga}, ${address.state}`;
+      setEditingAddress(addressString); // Set the editing address string
+      setIsAddressModalOpen(true); // Open the modal
+    }
   };
 
   const handleDeleteAddress = async (addr_id) => {
-    // Handle delete address logic here
-    // console.log("ADDRESS ID: ", id);
     try {
       const result = await deleteAddressAsync(addr_id);
       auth.notifyOrderSuccessful(result.message);
@@ -131,7 +138,7 @@ const ProfileComponent = ({ user, address, stateAndLga }) => {
       UpdateAddressData({ addr_id: addressId, newAddr }); //update existing address
       setIsChangingAddress(false);
     }
-    setIsAddressModalOpen(false);
+    setIsAddressModalOpen(false); // Close the modal after saving
   };
 
   // phone
@@ -197,7 +204,7 @@ const ProfileComponent = ({ user, address, stateAndLga }) => {
   }, [address]);
 
   return (
-    <div className="container mx-auto lg:w-3/4 p-6 bg-gray-100 dark:bg-gray-900 rounded-lg shadow-lg">
+    <div className="container mx-auto lg:w-3/4 p-6 bg-gray-100 rounded-lg shadow-lg">
       <ToastContainer />
       <div className="mx-auto bg-white shadow-md rounded-lg overflow-hidden">
         <div className="flex flex-col items-center p-8 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-xl rounded-lg">
@@ -309,23 +316,39 @@ const ProfileComponent = ({ user, address, stateAndLga }) => {
                   : "bg-white row items-center mb-4 pl-16"
               }
             >
-              <div className="col-sm-8 justify-center">
-                {addr.address}, {addr.landmark}, {addr.town}, {addr.lga},{" "}
-                {addr.state}
-              </div>
-              <div className="col justify-center">
-                <button
-                  className="mt-4 bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700"
-                  onClick={() => handleEditAddress(addr)}
-                >
-                  {isChangingAddress ? "Cancel" : "Edit Address"}
-                </button>
-                <button
-                  className="ml-2 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
-                  onClick={() => handleDeleteAddress(addr.address_id)}
-                >
-                  Delete Address
-                </button>
+              <div className="flex justify-between items-center">
+                <div className="flex-1">
+                  {addr.address}, {addr.landmark}, {addr.town}, {addr.lga},{" "}
+                  {addr.state}
+                </div>
+                <div className="flex space-x-2 m-4">
+                  <a
+                    href="#AddNewAddress"
+                    // id={`editAddressBtn${index}`}
+                    className="flex items-center text-primary hover:text-red-700"
+                    onClick={
+                      () => handleEditAddress(addr)
+                      // handleEditAddress(addr, `editAddressBtn${index}`)
+                    }
+                  >
+                    <PencilIcon className="h-6 w-6" />
+                    <span className="ml-2">
+                      {isChangingAddress && editingAddressId === addr.address_id
+                        ? "Cancel"
+                        : "Edit"}
+                    </span>
+                  </a>
+                  <span> | </span>
+                  <a
+                    href="#"
+                    // id={`deleteAddressBtn${index}`}
+                    className="flex items-center text-red-600 hover:text-red-700"
+                    onClick={() => handleDeleteAddress(addr.address_id)}
+                  >
+                    <TrashIcon className="h-6 w-6" />
+                    <span className="ml-2">Delete</span>
+                  </a>
+                </div>
               </div>
             </div>
           ))}
@@ -337,15 +360,17 @@ const ProfileComponent = ({ user, address, stateAndLga }) => {
           </button>
         </div>
       </div>
-      {(isChangingAddress || isAddingAddress) && (
+
+      {(isChangingAddress && editingAddressId) || isAddingAddress ? (
         <AddNewAddress
+          id="AddNewAddress"
           isOpen={isAddressModalOpen}
           onClose={() => setIsAddressModalOpen(false)}
           onSave={handleSaveAddress}
           initialAddress={editingAddress}
           stateAndLga={stateAndLga}
         />
-      )}
+      ) : null}
     </div>
   );
 };

@@ -12,7 +12,7 @@ const OrderHistory = ({ orders }) => {
   // const currentOrders = orders.filter((order) => order.status !== "completed");
 
   return (
-    <div className="container mx-auto overflow-x-auto lg:w-3/4 p-6 bg-gray-100 dark:bg-gray-900 rounded-lg shadow-lg">
+    <div className="container mx-auto overflow-x-auto lg:w-3/4 p-6 bg-gray-100 rounded-lg shadow-lg">
       <h2 className="text-4xl font-bold mb-4">Order History</h2>
       <table className="min-w-full bg-white border mb-6">
         <thead>

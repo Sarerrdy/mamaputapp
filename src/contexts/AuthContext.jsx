@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
   const notifyOrderSuccessful = (results) =>
     toast.success(`${results}`, {
       position: "top-center",
-      autoClose: 2000,
+      autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
   const notifyOrderFailure = (results) =>
     toast.error(`${results}`, {
       position: "top-center",
-      autoClose: 2000,
+      autoClose: 4000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,

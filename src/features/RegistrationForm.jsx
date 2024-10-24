@@ -2,15 +2,21 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import statesAndLGAs from "../data/stateLGAList";
 import { useCreateData } from "../hooks/useApi";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 //state and corresponding LGAs Array
 const stateAndLga = statesAndLGAs;
 
 const RegistrationForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] =
+    useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -25,36 +31,6 @@ const RegistrationForm = () => {
 
   const password = watch("password");
 
-  const notifySuccessful = (results) =>
-    toast.success(`Registration of ${results} was sucessful`, {
-      position: "top-center",
-      autoClose: 4000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "colored",
-      style: {
-        backgroundColor: "#05b858",
-        color: "#ffffff",
-      },
-    });
-
-  const notifyError = (error) =>
-    toast.error(`Registration failed. Error: ${error}`, {
-      position: "top-center",
-      autoClose: 2000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "colored",
-      style: {
-        backgroundColor: "#b9220e",
-        color: "#fff",
-      },
-    });
-
   //submit a post request for new registration
   const onSubmit = (data) => {
     const checkLoginStatus = async () => {
@@ -64,15 +40,16 @@ const RegistrationForm = () => {
         });
 
         if (response == data["email"]) {
-          notifySuccessful(response);
+          auth.notifyOrderSuccessful(
+            `Registration of ${response} was sucessful`
+          );
           reset();
           setTimeout(() => {
             auth.logOut();
           }, 1000);
         }
       } catch (error) {
-        console.error("something when wrong", error);
-        notifyError(error);
+        auth.notifyOrderFailure(`Registration failed. Error: ${error}`);
       }
     };
     checkLoginStatus();
@@ -82,13 +59,24 @@ const RegistrationForm = () => {
     setSelectedState(event.target.value);
   };
 
+  //toggle show password
+  const toggleShowPassword = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+  //toggle show confirm password
+  const toggleShowConfirmPassword = () => {
+    setShowConfirmPassword(
+      (prevShowConfirmPassword) => !prevShowConfirmPassword
+    );
+  };
+
   return (
     <div className="max-w-5xl text-2xl mx-auto bg-white p-8 border border-gray-300 rounded-lg shadow-lg">
       <ToastContainer />
       <h2 className="text-2xl font-bold mb-6 text-center">User Registration</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label className="block text-base font-medium text-gray-700">
+          <label className="block text-lg font-medium text-gray-700">
             Title
           </label>
           <input
@@ -96,11 +84,11 @@ const RegistrationForm = () => {
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           />
           {errors.title && (
-            <p className="text-red-500 text-sm mt-1">Title is required</p>
+            <p className="text-red-500 text-base mt-1">Title is required</p>
           )}
         </div>
         <div>
-          <label className="block text-base font-medium text-gray-700">
+          <label className="block text-lg font-medium text-gray-700">
             First Name
           </label>
           <input
@@ -108,11 +96,13 @@ const RegistrationForm = () => {
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           />
           {errors.first_name && (
-            <p className="text-red-500 text-sm mt-1">First name is required</p>
+            <p className="text-red-500 text-base mt-1">
+              First name is required
+            </p>
           )}
         </div>
         <div>
-          <label className="block text-base font-medium text-gray-700">
+          <label className="block text-lg font-medium text-gray-700">
             Last Name
           </label>
           <input
@@ -120,27 +110,27 @@ const RegistrationForm = () => {
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           />
           {errors.last_name && (
-            <p className="text-red-500 text-sm mt-1">Last name is required</p>
+            <p className="text-red-500 text-base mt-1">Last name is required</p>
           )}
         </div>
         <div>
-          <label className="block text-base font-medium text-gray-700">
+          <label className="block text-lg font-medium text-gray-700">
             Gender
           </label>
           <select
             {...register("gender", { required: true })}
-            className="mt-1 block text-base w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block text-lg w-full p-2 border border-gray-300 rounded-md"
           >
             <option value="">Select Gender</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
           {errors.gender && (
-            <p className="text-red-500 text-sm mt-1">Gender is required</p>
+            <p className="text-red-500 text-base mt-1">Gender is required</p>
           )}
         </div>
         <div>
-          <label className="block text-base font-medium text-gray-700">
+          <label className="block text-lg font-medium text-gray-700">
             Email
           </label>
           <input
@@ -149,76 +139,117 @@ const RegistrationForm = () => {
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           />
           {errors.email && (
-            <p className="text-red-500 text-sm mt-1">Email is required</p>
+            <p className="text-red-500 text-base mt-1">Email is required</p>
           )}
         </div>
+
         <div>
-          <label className="block text-base font-medium text-gray-700">
+          <label className="block text-lg font-medium text-gray-700">
             Password
           </label>
-          <input
-            type="password"
-            {...register("password", { required: true })}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          />
+
+          <div
+            className="relative w-full"
+            onFocus={() => setIsPasswordFocused(true)}
+            onBlur={() => setIsPasswordFocused(false)}
+            tabIndex={-1}
+            style={{ outline: "none" }}
+          >
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter password"
+              {...register("password", { required: true })}
+              className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            />
+            {isPasswordFocused && (
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                {showPassword ? (
+                  <EyeSlashIcon
+                    className="h-8 w-8 text-gray-500 cursor-pointer"
+                    onClick={toggleShowPassword}
+                  />
+                ) : (
+                  <EyeIcon
+                    className="h-8 w-8 text-gray-500 cursor-pointer"
+                    onClick={toggleShowPassword}
+                  />
+                )}
+              </div>
+            )}
+          </div>
+
           {errors.password && (
-            <p className="text-red-500 text-sm mt-1">Password is required</p>
+            <p className="text-red-500 text-base mt-1">Password is required</p>
           )}
         </div>
+
         <div className="mt-4">
-          <label className="block text-base font-medium text-gray-700">
+          <label className="block text-lg font-medium text-gray-700">
             Confirm Password
           </label>
-          <input
-            type="password"
-            {...register("confirmPassword", {
-              required: "Confirm Password is required",
-              validate: (value) =>
-                value === password || "Passwords do not match",
-            })}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          />
+          <div
+            className="relative w-full"
+            onFocus={() => setIsConfirmPasswordFocused(true)}
+            onBlur={() => setIsConfirmPasswordFocused(false)}
+            tabIndex={-1}
+            style={{ outline: "none" }}
+          >
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Confirm Password"
+              {...register("confirmPassword", {
+                required: "Confirm Password is required",
+                validate: (value) =>
+                  value === password || "Passwords do not match",
+              })}
+              className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            />
+            {isConfirmPasswordFocused && (
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                {showConfirmPassword ? (
+                  <EyeSlashIcon
+                    className="h-8 w-8 text-gray-500 cursor-pointer"
+                    onClick={toggleShowConfirmPassword}
+                  />
+                ) : (
+                  <EyeIcon
+                    className="h-8 w-8 text-gray-500 cursor-pointer"
+                    onClick={toggleShowConfirmPassword}
+                  />
+                )}
+              </div>
+            )}
+          </div>
           {errors.confirmPassword && (
-            <p className="text-red-500 text-sm mt-1">
+            <p className="text-red-500 text-base mt-1">
               {errors.confirmPassword.message}
             </p>
           )}
         </div>
         <div>
-          <label className="block text-base font-medium text-gray-700">
+          <label className="block text-lg font-medium text-gray-700">
             Phone
           </label>
           <input
-            type="tel"
+            type="number"
             {...register("phone", { required: true })}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           />
           {errors.phone && (
-            <p className="text-red-500 text-sm mt-1">
+            <p className="text-red-500 text-base mt-1">
               Phone number is required
             </p>
           )}
         </div>
-        {/* <div>
-          <label className="block text-base font-medium text-gray-700">
-            User URL
-          </label>
-          <input
-            {...register("user_url", { required: true })}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          />
-          {errors.user_url && (
-            <p className="text-red-500 text-sm mt-1">User URL is required</p>
-          )}
-        </div> */}
+
         <h2 className="text-2xl font-bold mt-6 mb-4 text-center">Address</h2>
         <div>
-          <label className="block text-base font-medium text-gray-700">
+          <label className="block text-lg font-medium text-gray-700">
             State
           </label>
           <select
             {...register("state", { required: true })}
-            className="mt-1 block text-base w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block text-lg w-full p-2 border border-gray-300 rounded-md"
             onChange={handleStateChange}
           >
             <option value="">Select State</option>
@@ -229,16 +260,14 @@ const RegistrationForm = () => {
             ))}
           </select>
           {errors.state && (
-            <p className="text-red-500 text-sm mt-1">State is required</p>
+            <p className="text-red-500 text-base mt-1">State is required</p>
           )}
         </div>
         <div>
-          <label className="block text-base font-medium text-gray-700">
-            LGA
-          </label>
+          <label className="block text-lg font-medium text-gray-700">LGA</label>
           <select
             {...register("lga", { required: true })}
-            className="mt-1 block text-base w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block text-lg w-full p-2 border border-gray-300 rounded-md"
           >
             <option value="">Select LGA</option>
             {selectedState &&
@@ -249,11 +278,11 @@ const RegistrationForm = () => {
               ))}
           </select>
           {errors.lga && (
-            <p className="text-red-500 text-sm mt-1">LGA is required</p>
+            <p className="text-red-500 text-base mt-1">LGA is required</p>
           )}
         </div>
         <div>
-          <label className="block text-base font-medium text-gray-700">
+          <label className="block text-lg font-medium text-gray-700">
             Address
           </label>
           <input
@@ -261,11 +290,11 @@ const RegistrationForm = () => {
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           />
           {errors.address && (
-            <p className="text-red-500 text-sm mt-1">Address is required</p>
+            <p className="text-red-500 text-base mt-1">Address is required</p>
           )}
         </div>
         <div>
-          <label className="block text-base font-medium text-gray-700">
+          <label className="block text-lg font-medium text-gray-700">
             Town
           </label>
           <input
@@ -273,11 +302,11 @@ const RegistrationForm = () => {
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           />
           {errors.town && (
-            <p className="text-red-500 text-sm mt-1">Town is required</p>
+            <p className="text-red-500 text-base mt-1">Town is required</p>
           )}
         </div>
         <div>
-          <label className="block text-base font-medium text-gray-700">
+          <label className="block text-lg font-medium text-gray-700">
             Landmark
           </label>
           <input

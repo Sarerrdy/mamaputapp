@@ -27,7 +27,7 @@ export default function TopNavBar() {
   return (
     <Disclosure as="nav" className="bg-gray-800">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-4">
-        <div className="relative flex h-16 items-center justify-between">
+        <div className="relative flex h-16  items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
             {/* Mobile menu button*/}
             <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
@@ -50,7 +50,7 @@ export default function TopNavBar() {
                   alt="Mama Put"
                   // src="src/assets/images/mamaput_logo1.png"
                   src="./images/mamaput_logo1.png"
-                  className="h-8 w-auto"
+                  className="h-16 w-auto"
                 />
               </NavLink>
             </div>
@@ -65,7 +65,7 @@ export default function TopNavBar() {
                       item.current
                         ? "bg-gray-900 text-white cusor"
                         : "text-gray-200 hover:bg-gray-700 hover:text-white",
-                      "rounded-md px-3 py-2 text-lg lg:text-xl font-medium"
+                      "rounded-md px-3 py-2 text-5lg lg:text-xl font-medium"
                     )}
                   >
                     {item.name}
@@ -81,14 +81,14 @@ export default function TopNavBar() {
             >
               <span className="absolute -inset-1.5" />
               <span className="sr-only">View notifications</span>
-              <BellIcon aria-hidden="true" className="h-6 w-6" />
+              <BellIcon aria-hidden="true" className="h-8 w-8" />
             </button>
 
             {/* Profile dropdown */}
             {auth.isAuthenticated ? (
               <Menu as="div" className="relative ml-3">
                 <div>
-                  <MenuButton className="relative flex rounded-full lg:text-xl md:text-lg text-base bg-gray-800 text-gray-200 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                  <MenuButton className="relative flex rounded-full lg:text-xl md:text-lg bg-gray-800 text-gray-200 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
                     profile
@@ -101,7 +101,7 @@ export default function TopNavBar() {
                   <MenuItem>
                     <NavLink
                       to="/profile"
-                      className="block px-4 py-2 text-base text-gray-700 data-[focus]:bg-gray-100"
+                      className="block px-4 py-2  text-gray-700 data-[focus]:bg-gray-100"
                     >
                       My Profile
                     </NavLink>
@@ -109,14 +109,14 @@ export default function TopNavBar() {
                   <MenuItem>
                     <NavLink
                       to="#"
-                      className="block px-4 py-2 text-base text-gray-700 data-[focus]:bg-gray-100"
+                      className="block px-4 py-2  text-gray-700 data-[focus]:bg-gray-100"
                     >
                       my orders
                     </NavLink>
                   </MenuItem>
                   <MenuItem>
                     <button
-                      className="block px-4 py-2 text-base text-gray-700 data-[focus]:bg-gray-100"
+                      className="block px-4 py-2 text-gray-700 data-[focus]:bg-gray-100"
                       onClick={() => auth.logOut()}
                     >
                       Sign out
@@ -127,7 +127,7 @@ export default function TopNavBar() {
             ) : (
               <Menu as="div" className="relative ml-3">
                 <div>
-                  <MenuButton className="relative flex rounded-full lg:text-xl md:text-lg text-base bg-gray-800 text-gray-200 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                  <MenuButton className="relative flex rounded-full lg:text-xl md:text-lg bg-gray-800 text-gray-200 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
                     Sign in
@@ -140,7 +140,7 @@ export default function TopNavBar() {
                   <MenuItem>
                     <NavLink
                       to="/signin"
-                      className="block px-4 py-2 text-base text-gray-700 data-[focus]:bg-gray-100"
+                      className="block px-4 py-2 text-gray-700 data-[focus]:bg-gray-100"
                     >
                       login
                     </NavLink>
@@ -148,7 +148,7 @@ export default function TopNavBar() {
                   <MenuItem>
                     <NavLink
                       to="/register"
-                      className="block px-4 py-2 text-base text-gray-700 data-[focus]:bg-gray-100"
+                      className="block px-4 py-2 text-gray-700 data-[focus]:bg-gray-100"
                     >
                       sign up
                     </NavLink>

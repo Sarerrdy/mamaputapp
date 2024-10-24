@@ -1,12 +1,16 @@
+import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useCreateData } from "../hooks/useApi";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { NavLink } from "react-router-dom";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 const LoginForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   //try token authentication first
   const auth = useAuth();
   const {
@@ -18,36 +22,6 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const createOrderMutation = useCreateData("login");
 
-  const notifySuccessful = (results) =>
-    toast.success(`Signin of ${results} was sucessful`, {
-      position: "top-center",
-      autoClose: 4000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "colored",
-      style: {
-        backgroundColor: "#05b858",
-        color: "#ffffff",
-      },
-    });
-
-  const notifyError = (error) =>
-    toast.error(`Sign-in operation failed!!: ${error}`, {
-      position: "top-center",
-      autoClose: 2000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "colored",
-      style: {
-        backgroundColor: "#b9220e",
-        color: "#fff",
-      },
-    });
-
   const onSubmit = async (data) => {
     try {
       await createOrderMutation.mutateAsync(
@@ -56,18 +30,18 @@ const LoginForm = () => {
         },
         {
           onSuccess(data) {
-            notifySuccessful(data["email"]);
+            auth.notifyOrderSuccessful(
+              `Signin of ${data["email"]} was sucessful`
+            );
             initializer(data);
           },
           onError: (error) => {
-            console.error("LOGIN-ERROR", error);
-            notifyError(error);
+            auth.notifyOrderFailure(`Sign-in operation failed!!: ${error}`);
           },
         }
       );
     } catch (error) {
-      console.error("LOGIN-ERROR", error);
-      notifyError(error);
+      auth.notifyOrderFailure(`Sign-in operation failed!!: ${error}`);
     }
   };
 
@@ -93,6 +67,12 @@ const LoginForm = () => {
     // return;
   };
 
+  //toggle show password
+  const toggleShowPassword = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+    // setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
   return (
     <div className="container py-5 min-vh-100 bg-body-secondary rounded-lg shadow-md">
       <ToastContainer />
@@ -102,9 +82,9 @@ const LoginForm = () => {
           <div>
             <label
               htmlFor="username"
-              className="block text-sm font-medium text-gray-700"
+              className="block font-medium text-gray-700"
             >
-              Email
+              Email:
             </label>
             <input
               type="text"
@@ -118,25 +98,50 @@ const LoginForm = () => {
               </p>
             )}
           </div>
-          <div>
+
+          <div className="flex flex-col">
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
+              className="block font-medium text-gray-700"
             >
-              Password
+              Password:
             </label>
-            <input
-              type="password"
-              id="password"
-              {...register("password", { required: "Password is required" })}
-              className="w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-indigo-200 focus:border-indigo-300"
-            />
-            {errors.password && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.password.message}
-              </p>
-            )}
+            {/* <div className="relative w-full"> */}
+            <div
+              className="relative w-full"
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              tabIndex={-1}
+              style={{ outline: "none" }}
+            >
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter password"
+                id="password"
+                {...register("password", {
+                  required: "Password is required",
+                })}
+                className="w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-indigo-200 focus:border-indigo-300"
+              />
+              {isFocused && (
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  {showPassword ? (
+                    <EyeSlashIcon
+                      className="h-8 w-8 text-gray-500 cursor-pointer"
+                      onClick={toggleShowPassword}
+                    />
+                  ) : (
+                    <EyeIcon
+                      className="h-8 w-8 text-gray-500 cursor-pointer"
+                      onClick={toggleShowPassword}
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+            {/* </div> */}
           </div>
+
           <div>
             <button
               type="submit"

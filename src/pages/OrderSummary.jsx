@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import OrderDetails from "../features/OrderDetails";
 import { OrderCtx } from "../contexts/OrderContext";
 import { useFetchData } from "../hooks/useApi";
@@ -25,12 +25,12 @@ export default function OrderSummary() {
         isLoading={isLoading}
       ></OrderDetails>
       <div className="flex justify-center">
-        <NavLink
+        <a
           className="px-6 py-3 bg-blue-600 text-white text-lg font-bold uppercase rounded hover:bg-blue-500 focus:outline-none focus:bg-blue-500"
-          to={auth.returnUrl}
+          href={auth.returnUrl}
         >
           {auth.returnUrl === "/profile" ? "Return to Profile" : "Return Home"}
-        </NavLink>
+        </a>
       </div>
     </div>
   );

@@ -3,77 +3,20 @@ import { useContext } from "react";
 import { CartContext } from "../contexts/CartContext";
 import PropTypes, { object } from "prop-types";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { NavLink } from "react-router-dom";
-import {} from "@heroicons/react/24/outline";
+// import {} from "@heroicons/react/24/outline";
 import { Spinner } from "react-bootstrap";
+import { useAuth } from "../contexts/AuthContext";
 
 // import Cart from "./Cart";
 
 export default function MenuCard({ data, error, isLoading }) {
-  // const [menus, setMenus] = useState([]);
+  const auth = useAuth();
   const { cartItems, getTotalItems, addToCart, removeFromCart } =
     useContext(CartContext);
   // const [showModal, setShowModal] = useState(false);
-
-  // const toggle = () => {
-  //   setShowModal(!showModal);
-  // };
-
-  const notifyAddedToCart = (item) =>
-    toast.success(`1 ${item.name} added to cart!`, {
-      position: "top-center",
-      autoClose: 2000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "colored",
-      style: {
-        backgroundColor: "#05b858",
-        color: "#ffffff",
-      },
-    });
-
-  const allnotifyRemovedFromCart = (item) =>
-    toast.error(`All ${item.name} removed from cart!`, {
-      position: "top-center",
-      autoClose: 2000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "colored",
-      style: {
-        backgroundColor: "#b9220e",
-        color: "#fff",
-      },
-    });
-
-  const onenotifyRemovedFromCart = (item) =>
-    toast.error(`1 ${item.name} item was removed from cart!`, {
-      position: "top-center",
-      autoClose: 2000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "colored",
-      style: {
-        backgroundColor: "#b9220e",
-        color: "#fff",
-      },
-    });
-
-  const allhandleRemoveFromCart = (menu) => {
-    removeFromCart(menu);
-    allnotifyRemovedFromCart(menu);
-  };
-  const onehandleRemoveFromCart = (menu) => {
-    removeFromCart(menu);
-    onenotifyRemovedFromCart(menu);
-  };
 
   if (isLoading)
     return (
@@ -134,7 +77,9 @@ export default function MenuCard({ data, error, isLoading }) {
                   className="px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
                   onClick={() => {
                     addToCart(menu);
-                    notifyAddedToCart(menu);
+                    auth.notifyOrderSuccessful(
+                      `1 ${menu.name} item was added into cart!`
+                    );
                   }}
                 >
                   Add to cart
@@ -146,7 +91,9 @@ export default function MenuCard({ data, error, isLoading }) {
                       className="px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
                       onClick={() => {
                         addToCart(menu);
-                        notifyAddedToCart(menu);
+                        auth.notifyOrderSuccessful(
+                          `1 ${menu.name} item was added into cart!`
+                        );
                       }}
                     >
                       +
@@ -164,9 +111,15 @@ export default function MenuCard({ data, error, isLoading }) {
                           (item) => item.menu_id === menu.menu_id
                         );
                         if (cartItem.quantity === 1) {
-                          allhandleRemoveFromCart(menu);
+                          removeFromCart(menu);
+                          auth.notifyOrderFailure(
+                            `All ${menu.name} items has been removed from cart!`
+                          );
                         } else {
-                          onehandleRemoveFromCart(menu);
+                          removeFromCart(menu);
+                          auth.notifyOrderFailure(
+                            `1 ${menu.name} item was removed from cart!`
+                          );
                         }
                       }}
                     >
