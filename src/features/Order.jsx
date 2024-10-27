@@ -7,7 +7,7 @@ import { CartContext } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
 import { useCreateData } from "../hooks/useApi";
 import { OrderCtx } from "../contexts/OrderContext";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useFetchData } from "../hooks/useApi";
 import apiClient from "../services/apiClient";
