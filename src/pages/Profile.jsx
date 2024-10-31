@@ -6,7 +6,7 @@ import statesAndLGAs from "../data/stateLGAList";
 
 const Profile = () => {
   const auth = useAuth();
-  const { data } = useFetchData(`orders?user_Id=${auth.user.user_id}`); //fetch orders
+  const { data } = useFetchData(`orders?user_id=${auth.user.user_id}`); //fetch orders
   const { data: userAddressesData } = useFetchData(
     `addresses?user_id=${auth.user.user_id}`
   ); //fetch addresses

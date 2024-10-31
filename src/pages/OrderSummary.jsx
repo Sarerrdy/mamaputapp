@@ -25,6 +25,7 @@ export default function OrderSummary() {
         isLoading={isLoading}
       ></OrderDetails>
       <div className="flex justify-center">
+        {auth.returnUrl === "/profile" ? "" : auth.setReturnUrl("/")}
         <a
           className="px-6 py-3 bg-blue-600 text-white text-lg font-bold uppercase rounded hover:bg-blue-500 focus:outline-none focus:bg-blue-500"
           href={auth.returnUrl}

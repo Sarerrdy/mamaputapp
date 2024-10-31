@@ -1,6 +1,7 @@
 import { useContext, useState, useEffect, useCallback } from "react";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 // import PropTypes from "prop-types";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { CartContext } from "../contexts/CartContext";
@@ -13,6 +14,7 @@ import { useFetchData } from "../hooks/useApi";
 import apiClient from "../services/apiClient";
 import statesAndLGAs from "../data/stateLGAList";
 import AddNewAddress from "../ui/AddNewAddress";
+// import PaymentForm from "./PaymentForm";
 
 //state and corresponding LGAs Array
 const stateAndLga = statesAndLGAs;
@@ -21,13 +23,14 @@ export default function Order() {
   //general context, states, and hooks
   const auth = useAuth();
   const navigate = useNavigate();
+  // const history = useHistory();
 
   const { cartItems, getTotalItems, getCartTotal, orderToken, setOrderToken } =
     useContext(CartContext); //cart states
 
   const [disable, setDisable] = useState(false); // make an order button state
 
-  auth.setReturnUrl("/"); // return home after completing order
+  // auth.setReturnUrl("/"); // return home after completing order
 
   const { setOrderPlacedId } = OrderCtx(); //order id use to view fetch order details
 
@@ -125,6 +128,7 @@ export default function Order() {
     amount: getCartTotal() + shippingCost,
     payment_status: paymentStatus,
     payment_date: paymentDate,
+    reference: uuidv4(),
     order_id: 0,
   };
 
@@ -180,17 +184,31 @@ export default function Order() {
       { orders: newOrder },
       {
         onSuccess: (data) => {
-          auth.notifyOrderSuccessful(
-            `order was successfully placed with order number #${data}`
-          );
-          setDisable(true);
-          setOrderPlacedId(data);
-          setOrderToken("");
-          localStorage.removeItem("order_token");
-          localStorage.removeItem("cartItems");
-          setTimeout(() => {
-            navigate("/OrderSummary");
-          }, 1000); // 1000 milliseconds = 1 seconds
+          console.log("PAYSTACK: ", data);
+          if (data.reference) {
+            // Navigate to PaymentForm
+            setOrderToken("");
+            navigate("/payment", {
+              state: {
+                email: auth.user.email,
+                amount: data.amount,
+                reference: data.reference,
+                order_id: data.order_id,
+              },
+            });
+          } else {
+            auth.notifyOrderSuccessful(
+              `order was successfully placed with order number #${data}`
+            );
+            setDisable(true);
+            setOrderPlacedId(data);
+            setOrderToken("");
+            localStorage.removeItem("order_token");
+            localStorage.removeItem("cartItems");
+            setTimeout(() => {
+              navigate("/OrderSummary");
+            }, 1000); // 1000 milliseconds = 1 seconds
+          }
         },
         onError: (error) => {
           auth.notifyOrderFailure(
@@ -245,7 +263,7 @@ export default function Order() {
 
           {/* <div className="text-3xl font-bold mb-4">Order Summary</div> */}
 
-          <table className="min-w-full bg-white border " key={order.order_id}>
+          <table className="min-w-full bg-white border ">
             <thead>
               <tr>
                 <th className="py-2 px-4 border-b">Item</th>
@@ -420,37 +438,20 @@ export default function Order() {
           <h2 className="text-3xl font-bold mb-4">Choose Method of Payment</h2>
           <div>
             <label
-              htmlFor="creditCard"
+              htmlFor="paystack"
               className="flex items-center cursor-pointer"
             >
               <input
                 type="radio"
-                id="creditCard"
-                value="Credit Card"
-                checked={selectedPaymentOption === "Credit Card"}
+                id="paystack"
+                value="paystack"
+                checked={selectedPaymentOption === "paystack"}
                 onChange={handlePaymentOptionChange}
                 className="form-radio h-5 w-5 text-green-600"
-                disabled
               />
-              <span className="ml-2 text-gray-700">Credit Card</span>
-            </label>
-          </div>
-
-          <div>
-            <label
-              htmlFor="bankTransfer"
-              className="flex items-center cursor-pointer"
-            >
-              <input
-                type="radio"
-                id="bankTransfer"
-                value="Bank Transfer"
-                checked={selectedPaymentOption === "Bank Transfer"}
-                onChange={handlePaymentOptionChange}
-                className="form-radio h-5 w-5 text-green-600"
-                disabled
-              />
-              <span className="ml-2 text-gray-700">Bank Transfer</span>
+              <span className="ml-2 text-gray-700">
+                Paystack (Credit and Debit, Bank transfer, USSD CODE etc)
+              </span>
             </label>
           </div>
 
