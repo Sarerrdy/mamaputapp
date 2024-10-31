@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import OrderHistory from "../features/OrderHistory";
 import ProfileComponent from "../features/ProfileComponent";
 import { useFetchData } from "../hooks/useApi";
@@ -27,7 +28,9 @@ const Profile = () => {
     addresses = [userAddressesData];
   }
 
-  console.log("PROFILE ADDRESS: ", addresses);
+  useEffect(() => {
+    document.title = "Profile";
+  }, []);
   return (
     <div className="container min-h-screen h-full bg-body-secondary">
       <div className="text-6xl text-center">User Profile</div>

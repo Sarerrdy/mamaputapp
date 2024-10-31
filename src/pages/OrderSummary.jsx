@@ -17,6 +17,10 @@ export default function OrderSummary() {
     }
   }, [auth.returnUrl, error, navigate, orderPlacedId]);
 
+  useEffect(() => {
+    document.title = "Order Summary";
+  }, []);
+
   return (
     <div className="container min-h-screen h-full bg-body-secondary">
       <OrderDetails

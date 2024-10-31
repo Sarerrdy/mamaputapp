@@ -1,9 +1,13 @@
+import { useEffect } from "react";
 import MenuCard from "../features/MenuCard";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useFetchData } from "../hooks/useApi";
 
 function Home() {
   const { data, error, isLoading } = useFetchData("menus");
+  useEffect(() => {
+    document.title = "Mamaput Home";
+  }, []);
   return (
     <div className="container bg-body-secondary px-20 min-vh-100">
       <MenuCard

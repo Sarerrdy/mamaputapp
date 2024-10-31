@@ -21,6 +21,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Register from "./pages/Register";
 import OrderSummary from "./pages/OrderSummary";
 import PaymentForm from "./features/PaymentForm";
+import PageTitle from "./ui/PageTitle";
 
 const queryClient = new QueryClient({
   defaultOptions: {

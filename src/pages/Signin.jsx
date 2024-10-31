@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -72,6 +72,10 @@ const LoginForm = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
     // setShowPassword((prevShowPassword) => !prevShowPassword);
   };
+
+  useEffect(() => {
+    document.title = "Login";
+  }, []);
 
   return (
     <div className="container py-5 min-vh-100 bg-body-secondary rounded-lg shadow-md">
