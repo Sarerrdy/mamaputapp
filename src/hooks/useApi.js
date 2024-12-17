@@ -28,8 +28,9 @@ export const useCreateData = (endpoint) => {
   return useMutation(
     {
     // queryKey:[endpoint],
-    mutationFn: async (newData) => {      
-      const { data } = await apiClient.post(endpoint, newData);
+    mutationFn: async (newData) => {   
+      const headers = newData instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : { 'Content-Type': 'application/json'};   
+      const { data } = await apiClient.post(endpoint, newData, {headers});
       return data;
     },
     
@@ -51,8 +52,9 @@ export const useCreateData = (endpoint) => {
 export const useUpdateData = (endpoint) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, updatedData }) => {       
-      const { data } = await apiClient.put(`${endpoint}/${id}`, updatedData);
+    mutationFn: async ({ id, updatedData }) => {  
+      const headers = updatedData instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : { 'Content-Type': 'application/json'};      
+      const { data } = await apiClient.put(`${endpoint}/${id}`, updatedData, {headers});
       return data;
     },
     

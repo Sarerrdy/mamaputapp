@@ -43,12 +43,3 @@ const PrivateRoute = () => {
 };
 
 export default PrivateRoute;
-
-//   async function loginWithToken(data, endpoint) {
-//     if (auth.token !== "") {
-//       const res = await auth.fetchAction(data, endpoint);
-//       if (res == true) navigate("/");
-//     }
-//   }
-//   loginWithToken({ token: auth.token }, "token");
-// }, []);

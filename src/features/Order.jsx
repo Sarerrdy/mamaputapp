@@ -174,7 +174,7 @@ export default function Order() {
   //Generate an order
   let order = {
     total_price: getCartTotal(),
-    status: "order received",
+    status: "Received",
     user_id: auth.user.user_id,
   };
 
