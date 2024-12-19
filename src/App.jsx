@@ -10,6 +10,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Services from "./pages/Services";
 import PrivateRoute from "./pages/PrivateRoute";
+import AdminRoute from "./pages/AdminRoute";
 import Checkout from "./pages/Checkout";
 import Profile from "./pages/Profile";
 import Signin from "./pages/Signin";
@@ -72,29 +73,34 @@ function App() {
                       <Route path="ordersummary" element={<OrderSummary />} />
                     </Route>
                     {/* Admin Dashboard Route */}{" "}
-                    <Route path="admin" element={<AdminDashboard />}>
-                      <Route path="categories" element={<CategoryList />} />
-                      <Route
-                        path="categories/create"
-                        element={<CategoryCreate />}
-                      />
-                      <Route
-                        path="categories/edit/:id"
-                        element={<CategoryEdit />}
-                      />
-                      <Route
-                        path="categories/delete/:id"
-                        element={<CategoryDelete />}
-                      />
-                      <Route path="menus" element={<MenuList />} />
-                      <Route path="menus/edit/:id" element={<MenuEdit />} />
-                      <Route path="menus/create" element={<MenuCreate />} />
-                      <Route path="menus/delete/:id" element={<MenuDelete />} />
-                      <Route path="orders" element={<OrderList />} />{" "}
-                      <Route
-                        path="orders/edit/:order_id"
-                        element={<OrderEdit />}
-                      />
+                    <Route element={<AdminRoute />}>
+                      <Route path="admin" element={<AdminDashboard />}>
+                        <Route path="categories" element={<CategoryList />} />
+                        <Route
+                          path="categories/create"
+                          element={<CategoryCreate />}
+                        />
+                        <Route
+                          path="categories/edit/:id"
+                          element={<CategoryEdit />}
+                        />
+                        <Route
+                          path="categories/delete/:id"
+                          element={<CategoryDelete />}
+                        />
+                        <Route path="menus" element={<MenuList />} />
+                        <Route path="menus/edit/:id" element={<MenuEdit />} />
+                        <Route path="menus/create" element={<MenuCreate />} />
+                        <Route
+                          path="menus/delete/:id"
+                          element={<MenuDelete />}
+                        />
+                        <Route path="orders" element={<OrderList />} />{" "}
+                        <Route
+                          path="orders/edit/:order_id"
+                          element={<OrderEdit />}
+                        />
+                      </Route>
                     </Route>
                   </Route>
                 </Routes>

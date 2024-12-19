@@ -49,22 +49,27 @@ const LoginForm = () => {
     try {
       let authToken = res[0];
       let authUser = res[1];
+      let authRole = res[3];
 
       if (authUser) {
         auth.setUser(authUser);
         auth.setToken(authToken);
+        auth.setRole(authRole);
 
         localStorage.setItem("site_user", JSON.stringify(authUser));
         localStorage.setItem("site_token", authToken);
+        localStorage.setItem("site_role", authRole.role_name.trim());
         auth.setIsAuthenticated(true);
 
-        if (auth.returnUrl !== "") navigate(auth.returnUrl);
-        if (auth.returnUrl == "") navigate("/");
+        console.log("ReURL", auth.returnUrl);
+        console.log("IsAdmin", auth.isAdmin);
+        if (auth.returnUrl && auth.returnUrl !== "/") navigate(auth.returnUrl);
+        // else if (auth.role === "Admin") navigate("/admin");
+        else navigate("/");
       }
     } catch (err) {
       console.error(err);
     }
-    // return;
   };
 
   //toggle show password

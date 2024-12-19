@@ -6,39 +6,37 @@ import { useFetchData } from "../hooks/useApi";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  //user
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("site_user")) || ""
   );
-  // addresses object
-  const [addresses, setAddresses] = useState(null);
-
-  //fetch addresses
-
-  //token
   const [token, setToken] = useState(localStorage.getItem("site_token") || "");
-  const [address, setAddress] = useState(
+  const [role, setRole] = useState(localStorage.getItem("site_role") || "");
+  const [address, setAddresses] = useState(
     localStorage.getItem("site_address") || ""
   );
-
-  //others
-  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [returnUrl, setReturnUrl] = useState("");
+  const [isAdmin, setIsAdmin] = useState(
+    JSON.parse(localStorage.getItem("site_isAdmin")) || false
+  );
+  const [returnUrl, setReturnUrl] = useState("/");
+  // const [returnUrl, setReturnUrl] = useState(
+  //   localStorage.getItem("site_returUrl") || "/"
+  // );
+
+  const navigate = useNavigate();
 
   const logOut = () => {
     setUser("");
     setToken("");
     localStorage.removeItem("site_token");
     localStorage.removeItem("site_user");
+    localStorage.removeItem("site_role");
     localStorage.removeItem("site_address");
-    localStorage.removeItem("site_address_id");
-    // localStorage.removeItem("site_full_address");
+    // localStorage.removeItem("site_returUrl");
+    localStorage.removeItem("site_isAdmin");
     setIsAuthenticated(false);
     navigate("/signin");
   };
-
-  ///Toast
 
   const notifyOrderSuccessful = (results) =>
     toast.success(`${results}`, {
@@ -91,10 +89,12 @@ export const AuthProvider = ({ children }) => {
         setToken,
         user,
         setUser,
-        addresses,
-        setAddresses,
+        role,
+        setRole,
+        isAdmin,
+        setIsAdmin,
         address,
-        setAddress,
+        setAddresses,
         logOut,
         isAuthenticated,
         setIsAuthenticated,
@@ -109,8 +109,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
-
-// export default AuthProvider;
+export const useAuth = () => useContext(AuthContext);

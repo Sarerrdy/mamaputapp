@@ -8,7 +8,7 @@ import {
   MenuItems,
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 const navigation = [
@@ -16,7 +16,7 @@ const navigation = [
   { name: "Services", href: "/services", current: false },
   { name: "About", href: "/about", current: false },
   { name: "Contact", href: "/contact", current: false },
-  { name: "AdminDashboard", href: "/admin", current: false },
+  // { name: "AdminDashboard", href: "/admin", current: false },
 ];
 
 function classNames(...classes) {
@@ -25,6 +25,15 @@ function classNames(...classes) {
 
 export default function TopNavBar() {
   const auth = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleNavClick = (href) => {
+    // Capture the previous location before navigating
+    const from = location.pathname;
+    navigate(href, { state: { from } });
+  };
+
   return (
     <Disclosure as="nav" className="bg-gray-800">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-4">
@@ -56,22 +65,35 @@ export default function TopNavBar() {
               </NavLink>
             </div>
             <div className="hidden sm:ml-6 sm:block">
-              <div className="flex space-x-4">
+              <div className="flex space-x-4 cursor-pointer">
                 {navigation.map((item) => (
-                  <NavLink
+                  <span
                     key={item.name}
-                    to={item.href}
-                    aria-current={item.current ? "page" : undefined}
+                    onClick={() => handleNavClick(item.href)}
                     className={classNames(
                       item.current
-                        ? "bg-gray-900 text-white cusor"
+                        ? "bg-gray-900 text-white"
                         : "text-gray-200 hover:bg-gray-700 hover:text-white",
                       "rounded-md px-3 py-2 text-5lg lg:text-xl font-medium"
                     )}
                   >
                     {item.name}
-                  </NavLink>
+                  </span>
                 ))}
+                {auth.isAuthenticated &&
+                  auth.role &&
+                  auth.role.role_name === "Admin" && (
+                    <>
+                      {console.log("TopBar RoleName: ", auth.role.role_name)}
+                      <span
+                        key="AdminDashboard"
+                        onClick={() => handleNavClick("/admin")}
+                        className="text-gray-200 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-5lg lg:text-xl font-medium"
+                      >
+                        AdminDashboard
+                      </span>
+                    </>
+                  )}
               </div>
             </div>
           </div>
@@ -176,10 +198,9 @@ export default function TopNavBar() {
                 "block rounded-md px-3 py-2 text-base font-medium"
               )}
             >
-              <NavLink
+              <span
                 key={item.name}
-                to={item.href}
-                aria-current={item.current ? "page" : undefined}
+                onClick={() => handleNavClick(item.href)}
                 className={classNames(
                   item.current
                     ? "bg-gray-900 text-white cusor"
@@ -188,7 +209,7 @@ export default function TopNavBar() {
                 )}
               >
                 {item.name}
-              </NavLink>
+              </span>
             </DisclosureButton>
           ))}
         </div>
