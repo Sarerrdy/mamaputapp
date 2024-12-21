@@ -10,7 +10,13 @@ export const AuthProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("site_user")) || ""
   );
   const [token, setToken] = useState(localStorage.getItem("site_token") || "");
-  const [role, setRole] = useState(localStorage.getItem("site_role") || "");
+  const [role, setRole] = useState(
+    JSON.parse(localStorage.getItem("site_role")) || []
+  );
+
+  // const [role, setRole] = useState(localStorage.getItem("site_role") || []);
+
+  // const [role, setRole] = useState(localStorage.getItem("site_role") || "");
   const [address, setAddresses] = useState(
     localStorage.getItem("site_address") || ""
   );

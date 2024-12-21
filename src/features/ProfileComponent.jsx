@@ -213,7 +213,7 @@ const ProfileComponent = ({ user, address, stateAndLga }) => {
           </h1>
           <p className="text-xl font-light">User ID: {user.user_id}</p>
           <p className="text-xl font-light">Email: {user.email}</p>
-          <p className="text-xl font-light">Role: {auth.role.role_name}</p>
+          <p className="text-xl font-light">Role: {auth.role}</p>
           <p className="text-xl font-light">Gender: {user.gender}</p>
           <p className="text-xl font-light">Joined on {user.join_date}</p>
           {isChangingPassword ? (

@@ -80,11 +80,18 @@ export default function TopNavBar() {
                     {item.name}
                   </span>
                 ))}
-                {auth.isAuthenticated &&
+                {(auth.isAuthenticated &&
                   auth.role &&
-                  auth.role.role_name === "Admin" && (
+                  Array.isArray(auth.role) &&
+                  auth.role.includes("Admin")) ||
+                  (auth.role.includes("SuperAdmin") && (
                     <>
-                      {console.log("TopBar RoleName: ", auth.role.role_name)}
+                      {/* {console.log(
+                        "Role TopNav: ",
+                        auth.role,
+                        "IsArray: ",
+                        Array.isArray(auth.role)
+                      )} */}
                       <span
                         key="AdminDashboard"
                         onClick={() => handleNavClick("/admin")}
@@ -93,7 +100,7 @@ export default function TopNavBar() {
                         AdminDashboard
                       </span>
                     </>
-                  )}
+                  ))}
               </div>
             </div>
           </div>

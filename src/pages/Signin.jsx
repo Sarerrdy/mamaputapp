@@ -58,13 +58,13 @@ const LoginForm = () => {
 
         localStorage.setItem("site_user", JSON.stringify(authUser));
         localStorage.setItem("site_token", authToken);
-        localStorage.setItem("site_role", authRole.role_name.trim());
+        localStorage.setItem("site_role", authRole);
+
         auth.setIsAuthenticated(true);
 
         console.log("ReURL", auth.returnUrl);
         console.log("IsAdmin", auth.isAdmin);
         if (auth.returnUrl && auth.returnUrl !== "/") navigate(auth.returnUrl);
-        // else if (auth.role === "Admin") navigate("/admin");
         else navigate("/");
       }
     } catch (err) {

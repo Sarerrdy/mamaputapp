@@ -17,16 +17,10 @@ const AdminRoute = () => {
 
   useEffect(() => {
     const checkAuthAndAdminStatus = async () => {
-      console.log("BEFORE AUTHCHECKREF");
-
       if (authCheckRef.current) return;
       authCheckRef.current = true;
 
-      // const storedToken = localStorage.getItem("site_token");
-      // const storedRole = localStorage.getItem("site_role");
       const storedToken = auth.token;
-      console.log("Token: ", storedToken);
-      if (auth.role) console.log("RoleAdminPg: ", auth.role.role_name);
 
       if (!storedToken) {
         navigate("/signin");
@@ -38,14 +32,16 @@ const AdminRoute = () => {
           token: storedToken,
         });
         auth.setIsAuthenticated(response);
-        console.log("Authentication Response:", response);
 
         if (response) {
-          if (auth.role && auth.role.role_name === "Admin") {
+          if (
+            (auth.role &&
+              Array.isArray(auth.role) &&
+              auth.role.includes("Admin")) ||
+            auth.role.includes("SuperAdmin")
+          ) {
             auth.setIsAdmin(true);
-            // localStorage.setItem("site_returUrl", "/admin");
             auth.setReturnUrl("/admin");
-            console.log("User is Admin, navigating to /admin");
             navigate("/admin");
           } else {
             if (!notificationRef.current) {
@@ -106,11 +102,7 @@ const AdminRoute = () => {
           <Spinner className="flex-row w-24 h-24" />
         </div>
       ) : (
-        <>
-          {console.log("Rendering Outlet, isAdmin:", auth.isAdmin)}
-          {/* {auth.isAdmin && navigate("/admin")} */}
-          {auth.isAdmin && <Outlet />}
-        </>
+        <>{auth.isAdmin && <Outlet />}</>
       )}
     </>
   );

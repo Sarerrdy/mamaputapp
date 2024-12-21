@@ -44,7 +44,7 @@ export const useCreateData = (endpoint) => {
   });
 };
 
-// Update data
+// Update data with id
 export const useUpdateData = (endpoint) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -54,6 +54,28 @@ export const useUpdateData = (endpoint) => {
           ? { "Content-Type": "multipart/form-data" }
           : { "Content-Type": "application/json" };
       const { data } = await apiClient.put(`${endpoint}/${id}`, updatedData, {
+        headers,
+      });
+      return data;
+    },
+
+    onSuccess: (data) => {
+      console.log("useUPDATE User :", data);
+      queryClient.invalidateQueries([endpoint]);
+    },
+  });
+};
+
+// Update data
+export const useUpdateDataWithoutId = (endpoint) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (updatedData) => {
+      const headers =
+        updatedData instanceof FormData
+          ? { "Content-Type": "multipart/form-data" }
+          : { "Content-Type": "application/json" };
+      const { data } = await apiClient.put(endpoint, updatedData, {
         headers,
       });
       return data;

@@ -34,6 +34,7 @@ import MenuCreate from "./components/Menu/MenuCreate";
 import MenuDelete from "./components/Menu/MenuDelete";
 import OrderList from "./components/Order/OrderList";
 import OrderEdit from "./components/Order/OrderEdit";
+import RoleManagement from "./components/Role/RoleManagement";
 
 const theme = createTheme();
 
@@ -99,6 +100,10 @@ function App() {
                         <Route
                           path="orders/edit/:order_id"
                           element={<OrderEdit />}
+                        />
+                        <Route
+                          path="/admin/roles"
+                          element={<RoleManagement />}
                         />
                       </Route>
                     </Route>
