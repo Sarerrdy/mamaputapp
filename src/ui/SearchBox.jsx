@@ -1,61 +1,114 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import DOMPurify from "dompurify";
+import validator from "validator";
+import { useAuth } from "../contexts/AuthContext"; // Import useAuth
+import { ToastContainer } from "react-toastify"; // Import ToastContainer
+import "react-toastify/dist/ReactToastify.css";
 
-const SearchBox = ({ users, onSearchResults }) => {
+const SearchBox = ({ onSearchResults, users, menus }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const auth = useAuth(); // Initialize useAuth
+  const [hasNoResults, setHasNoResults] = useState(false); // Add state for no results
 
   useEffect(() => {
-    const trimmedSearchQuery = searchQuery.trim();
-    const searchWords = trimmedSearchQuery
-      .split(" ")
-      .map((word) => word.toLowerCase());
-    const timeoutId = setTimeout(() => {
-      const filteredUsers = users.filter((user) => {
-        const userWords = [
-          user.first_name.toLowerCase(),
-          user.last_name.toLowerCase(),
-          user.email.toLowerCase(),
-        ];
+    if (searchQuery.trim() === "") {
+      setSearchResults([]); // Reset search results when search query is cleared
+      setHasNoResults(false); // Reset the no results state
+    }
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (searchQuery.trim() !== "") {
+      const trimmedSearchQuery = searchQuery.trim();
+      const searchWords = trimmedSearchQuery
+        .split(" ")
+        .map((word) => word.toLowerCase());
+
+      // Validate user input using validator.js
+      if (!validator.isLength(trimmedSearchQuery, { min: 1, max: 50 })) {
+        auth.notifyOrderFailure("Invalid search query length"); // Use toast notification
+        return;
+      }
+
+      // Allow spaces in the search query
+      const isValidQuery = searchWords.every((word) =>
+        validator.isAlphanumeric(word, "en-US", { ignore: " " })
+      );
+
+      if (!isValidQuery) {
+        auth.notifyOrderFailure("Invalid search query characters"); // Use toast notification
+        return;
+      }
+
+      // Sanitize and escape search results using DOMPurify
+      const sanitizedUsers = users
+        ? users.map((user) => ({
+            ...user,
+            first_name: DOMPurify.sanitize(user.first_name),
+            last_name: DOMPurify.sanitize(user.last_name),
+            email: DOMPurify.sanitize(user.email),
+          }))
+        : [];
+
+      const sanitizedMenus = menus
+        ? menus.map((menu) => ({
+            ...menu,
+            name: DOMPurify.sanitize(menu.name),
+            category: DOMPurify.sanitize(menu.category),
+          }))
+        : [];
+
+      const combinedResults = [...sanitizedUsers, ...sanitizedMenus];
+
+      const filteredResults = combinedResults.filter((result) => {
+        const resultWords = [
+          result.first_name && result.first_name.toLowerCase(),
+          result.last_name && result.last_name.toLowerCase(),
+          result.email && result.email.toLowerCase(),
+          result.name && result.name.toLowerCase(),
+          result.category && result.category.toLowerCase(),
+        ].filter(Boolean);
+
         return searchWords.some((word) =>
-          userWords.some((userWord) => userWord.includes(word))
+          resultWords.some((resultWord) => resultWord.includes(word))
         );
       });
-      setSearchResults(filteredUsers);
-      onSearchResults(filteredUsers);
-    }, 500);
 
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [searchQuery, users, onSearchResults]);
+      setSearchResults(filteredResults);
+      setHasNoResults(filteredResults.length === 0); // Update no results state
+    }
+  }, [searchQuery, users, menus]);
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
+  useEffect(() => {
+    onSearchResults(searchResults);
+  }, [searchResults, onSearchResults]);
 
   return (
-    <div className="flex justify-center mb-4">
+    <div className="relative">
       <input
         type="search"
         value={searchQuery}
-        onChange={handleSearchChange}
-        placeholder="Search by name or email"
-        className="w-full p-3 pl-10 text-lg text-gray-700 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-600"
+        onChange={(event) => setSearchQuery(event.target.value)}
+        placeholder="Search..."
+        className={`w-full p-2 border ${
+          hasNoResults ? "border-red-500" : "border-gray-300"
+        } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
       />
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-6 w-6 absolute left-3 top-4 text-gray-400"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
+      <button
+        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+        onClick={() => setSearchQuery("")}
       >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-        />
-      </svg>
+        &#x2715;
+      </button>
+      <ToastContainer /> {/* Add ToastContainer */}
+      {/* {searchQuery.trim() !== "" && (
+        <ul>
+          {searchResults.map((result, index) => (
+            <li key={index}>{result.first_name || result.name}</li>
+          ))}
+        </ul>
+      )} */}
     </div>
   );
 };

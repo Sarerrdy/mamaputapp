@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useFetchData, useUpdateDataWithoutId } from "../../hooks/useApi";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
@@ -32,43 +32,6 @@ const RoleManagement = () => {
   const handleSearchResults = (searchResults) => {
     setSearchResults(searchResults);
   };
-  //   const [searchQuery, setSearchQuery] = useState("");
-  //   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-
-  //   useEffect(() => {
-  //     const timeoutId = setTimeout(() => {
-  //       setDebouncedSearchQuery(searchQuery);
-  //     }, 500);
-
-  //     return () => {
-  //       clearTimeout(timeoutId);
-  //     };
-  //   }, [searchQuery]);
-
-  //   const handleSearch = async (searchQuery) => {
-  //     if (searchQuery.trim() === "") {
-  //       setSearchResults([]);
-  //       return;
-  //     }
-
-  //     const filteredUsers = users.filter((user) => {
-  //       return (
-  //         user.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //         user.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //         user.email.toLowerCase().includes(searchQuery.toLowerCase())
-  //       );
-  //     });
-
-  //     setSearchResults(filteredUsers);
-  //   };
-
-  //   useEffect(() => {
-  //     if (debouncedSearchQuery === "") {
-  //       setSearchResults([]);
-  //     } else {
-  //         handleSearch();
-  //     }
-  //   }, [debouncedSearchQuery]);
 
   const handleAssignRole = async (userId, roleName) => {
     if (roleName === "SuperAdmin" && !isSuperAdmin) {

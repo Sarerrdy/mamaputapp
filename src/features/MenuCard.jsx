@@ -1,5 +1,4 @@
-import { useContext } from "react";
-// import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { CartContext } from "../contexts/CartContext";
 import PropTypes, { object } from "prop-types";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -9,6 +8,7 @@ import { NavLink } from "react-router-dom";
 // import {} from "@heroicons/react/24/outline";
 import { Spinner } from "react-bootstrap";
 import { useAuth } from "../contexts/AuthContext";
+import SearchBox from "../ui/SearchBox";
 
 // import Cart from "./Cart";
 
@@ -16,7 +16,21 @@ export default function MenuCard({ data, error, isLoading }) {
   const auth = useAuth();
   const { cartItems, getTotalItems, addToCart, removeFromCart } =
     useContext(CartContext);
-  // const [showModal, setShowModal] = useState(false);
+
+  const [searchResults, setSearchResults] = useState([]);
+  const handleSearchResults = (searchResults) => {
+    searchResults.length > 0
+      ? setSearchResults(searchResults)
+      : setSearchResults(data);
+  };
+
+  if (!data) {
+    return (
+      <div className="flex justify-center h-screen p-24">
+        <Spinner className="w-24 h-24" />
+      </div>
+    );
+  }
 
   if (isLoading)
     return (
@@ -34,22 +48,21 @@ export default function MenuCard({ data, error, isLoading }) {
         <h1 className="text-2xl uppercase font-bold mt-10 text-center mb-10">
           Shop
         </h1>
-        {/* {!showModal && (
-          <button
-            className="px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
-            onClick={toggle}
-          >
-            Cart ({cartItems.length})
-            </button>
-            )} */}
+
         <nav className="navbar navbar-light badge">
           <NavLink className="badge text-lg text-dark" to="/shoppingcart">
             Cart ({getTotalItems()})
           </NavLink>
         </nav>
       </div>
+
+      <SearchBox
+        menus={data && Array.isArray(data) ? data : []}
+        onSearchResults={handleSearchResults}
+      />
+
       <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {data?.map((menu) => (
+        {searchResults?.map((menu) => (
           <div
             key={menu.menu_id}
             className="bg-white shadow-md justify-center items-center  rounded-lg px-10 py-10"
@@ -140,6 +153,7 @@ export default function MenuCard({ data, error, isLoading }) {
           </div>
         ))}
       </div>
+
       {/* <Cart showModal={showModal} toggle={toggle} /> */}
     </div>
   );
