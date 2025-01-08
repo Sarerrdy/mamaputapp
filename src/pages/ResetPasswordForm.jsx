@@ -55,8 +55,8 @@ const ResetPasswordForm = () => {
   };
 
   return (
-    <div className="flex w-full items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-1/4 p-8 space-y-8 bg-white rounded-lg shadow-md">
+    <div className="flex w-full items-center justify-center min-h-screen bg-gray-100 p-4">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
         <h2 className="text-3xl font-bold text-center text-gray-900">
           Reset Password
         </h2>

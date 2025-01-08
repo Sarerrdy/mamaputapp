@@ -63,15 +63,28 @@ const MenuItem = ({ menu, cartItems, addToCart, removeFromCart }) => {
         <h1 className="text-lg text-center uppercase font-bold">{menu.name}</h1>
         <p className="mt-2 text-gray-600 text-sm">
           {menu.description.slice(0, 120)}...
+          <NavLink
+            to="#"
+            className="text-blue-500 ml-1"
+            onClick={handleShowModal}
+          >
+            more
+          </NavLink>
         </p>
         <p className="text-center mt-2 text-gray-600">₦{menu.price}</p>
-        <div className="flex justify-center items-center mt-2">
+        <div className="flex flex-wrap justify-center items-center mt-2">
           <StarRatingReadOnly rating={averageRating} />
           <p
             className="ml-2 text-gray-600 cursor-pointer"
             onClick={handleShowModal}
           >
-            ({totalReviews} reviews)
+            <NavLink
+              to="#"
+              className="ml-2 text-gray-600 cursor-pointer"
+              onClick={handleShowModal}
+            >
+              ({totalReviews} reviews)
+            </NavLink>
           </p>
         </div>
 

@@ -7,6 +7,7 @@ import StarRatingInteractive from "./StarRatingInteractive";
 import RatingSummary from "./RatingSummary";
 import { useAuth } from "../contexts/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
+import CloseIcon from "@mui/icons-material/Close";
 
 const MenuItemModal = ({
   show,
@@ -144,97 +145,108 @@ const MenuItemModal = ({
 
   return (
     <Modal open={show} onClose={handleClose}>
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-5xl mx-auto my-auto overflow-y-auto h-full">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">{menu.name}</h2>
-          <Button onClick={handleClose} variant="contained" color="secondary">
-            Close
-          </Button>
-        </div>
-        <img
-          src={menu.menu_url}
-          alt={menu.name}
-          className="rounded-md w-full mb-4"
-        />
-        <p className="text-lg text-gray-700">{menu.description}</p>
-        <p className="text-xl font-semibold text-gray-800">
-          Price: ₦{menu.price}
-        </p>
-        <p className="text-lg text-gray-700">
-          Availability: {menu.availability ? "Available" : "Out of Stock"}
-        </p>
-        <div className="mt-4">
-          {cartItem ? (
-            <div className="flex gap-4">
-              <Button
-                onClick={handleAddToCart}
-                variant="contained"
-                color="primary"
-              >
-                +
-              </Button>
-              <p className="text-gray-600">{cartItem.quantity}</p>
-              <Button
-                onClick={handleRemoveFromCart}
-                variant="contained"
-                color="primary"
-              >
-                -
-              </Button>
-            </div>
-          ) : (
+      <div className="bg-white rounded-lg shadow-lg max-w-5xl sm:max-w-3/4 xs:max-w-3/4 mx-auto my-auto overflow-y-auto h-full">
+        <div className="p-4 mb-4">
+          <div className="sticky top-0 bg-white z-10 flex justify-between items-center p-4 border-b">
+            <h2 className="text-2xl font-bold">{menu.name}</h2>
             <Button
-              onClick={handleAddToCart}
+              onClick={handleClose}
               variant="contained"
-              color="primary"
+              style={{ backgroundColor: "#f44336", color: "#fff" }}
             >
-              Add to cart
-            </Button>
-          )}
-          {cartItems.length > 0 && (
-            <div className="mt-6 flex justify-center items-center">
-              <NavLink
-                className="px-4 py-2 bg-green-600 text-white text-xs font-bold uppercase rounded hover:bg-green-500 focus:outline-none"
-                to="/shoppingcart"
-              >
-                Check Out
-              </NavLink>
-            </div>
-          )}
-        </div>
-        <div className="flex justify-center items-center mt-2">
-          <StarRatingReadOnly rating={averageRating} />
-          <p className="ml-2 text-gray-600">({totalReviews} reviews)</p>
-        </div>
-        <div className="mt-4">
-          <h5 className="text-lg font-semibold">Your Review</h5>
-          <StarRatingInteractive
-            rating={userRating}
-            setRating={setUserRating}
-          />
-          <textarea
-            value={userReview}
-            onChange={(e) => setUserReview(e.target.value)}
-            placeholder="Write your review here"
-            className="form-control mt-2 p-2 border rounded-md"
-            disabled={!userRating}
-          />
-          <div className="flex justify-end mt-4">
-            <Button
-              onClick={handleSave}
-              variant="contained"
-              color="primary"
-              disabled={userRating === 0}
-            >
-              Save Changes
+              <CloseIcon />
             </Button>
           </div>
+          <img
+            src={menu.menu_url}
+            alt={menu.name}
+            className="rounded-md w-75 mx-auto mb-4"
+          />
+          <p className="text-xl text-gray-700">{menu.description}</p>
+          <p className="text-xl text-gray-800">
+            <span className="font-bold">Price:</span> ₦{menu.price}
+          </p>
+          <p className="text-lg text-gray-700">
+            <span className="font-bold">Availability:</span>{" "}
+            {menu.availability ? "Available" : "Out of Stock"}
+          </p>
+          <div className="flex items-center mt-2">
+            <StarRatingReadOnly rating={averageRating} />
+            <p className="ml-2 text-gray-600">({totalReviews} reviews)</p>
+          </div>
+          <div className="mt-4 flex items-start">
+            <div className="mt-4 flex flex-col items-center gap-4">
+              {cartItem ? (
+                <div className="flex items-center gap-4">
+                  <Button
+                    onClick={handleAddToCart}
+                    variant="contained"
+                    color="primary"
+                  >
+                    +
+                  </Button>
+                  <p className="text-gray-600">{cartItem.quantity}</p>
+                  <Button
+                    onClick={handleRemoveFromCart}
+                    variant="contained"
+                    color="primary"
+                  >
+                    -
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  onClick={handleAddToCart}
+                  variant="contained"
+                  color="primary"
+                >
+                  Add to cart
+                </Button>
+              )}
+              {cartItems.length > 0 && (
+                <div className="mt-4">
+                  <NavLink
+                    className="px-4 py-2 bg-green-600 text-white text-base font-bold uppercase rounded hover:bg-green-500 focus:outline-none"
+                    to="/shoppingcart"
+                  >
+                    Check Out
+                  </NavLink>
+                </div>
+              )}
+            </div>
+          </div>
+          <br />
+          <hr />
+          <div className="mt-4">
+            <h5 className="text-2xl font-semibold">Your Review</h5>
+            <StarRatingInteractive
+              rating={userRating}
+              setRating={setUserRating}
+            />
+            <textarea
+              value={userReview}
+              onChange={(e) => setUserReview(e.target.value)}
+              placeholder="Write your review here"
+              className="form-control text-xl mt-2 p-2 border rounded-md"
+              disabled={!userRating}
+            />
+            <div className="flex justify-end mt-4">
+              <Button
+                onClick={handleSave}
+                variant="contained"
+                color="primary"
+                disabled={userRating === 0}
+              >
+                Save Changes
+              </Button>
+            </div>
+          </div>
+          <RatingSummary
+            reviews={reviews}
+            ratingSummary={ratingSummary}
+            totalReviews={totalReviews}
+          />
         </div>
-        <RatingSummary
-          reviews={reviews}
-          ratingSummary={ratingSummary}
-          totalReviews={totalReviews}
-        />
       </div>
     </Modal>
   );

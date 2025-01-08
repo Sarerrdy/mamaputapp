@@ -77,8 +77,8 @@ const LoginForm = () => {
   }, []);
 
   return (
-    <div className="flex w-full items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-1/4 p-8 space-y-8 bg-white rounded-lg shadow-md">
+    <div className="flex w-full items-center justify-center min-h-screen bg-gray-100 p-4">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
         <h2 className="text-3xl font-bold text-center text-gray-900">Login</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
@@ -93,10 +93,10 @@ const LoginForm = () => {
               id="username"
               placeholder="Enter email"
               {...register("username", { required: "Username is required" })}
-              className="w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-indigo-200 focus:border-indigo-300"
+              className="w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-indigo-200 focus:border-indigo-300 text-xl"
             />
             {errors.username && (
-              <p className="mt-1 text-sm text-red-600">
+              <p className="mt-1 text-xl text-red-600">
                 {errors.username.message}
               </p>
             )}
@@ -123,7 +123,7 @@ const LoginForm = () => {
                 {...register("password", {
                   required: "Password is required",
                 })}
-                className="w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-indigo-200 focus:border-indigo-300"
+                className="w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-indigo-200 focus:border-indigo-300 text-xl"
               />
               {isFocused && (
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -154,7 +154,7 @@ const LoginForm = () => {
           <div>
             <button
               type="submit"
-              className="w-full px-4 py-2 font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-xl"
             >
               Login
             </button>

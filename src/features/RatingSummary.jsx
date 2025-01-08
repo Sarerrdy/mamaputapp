@@ -6,17 +6,17 @@ import { parseISO, format } from "date-fns";
 
 const RatingSummary = ({ reviews = [], ratingSummary, totalReviews }) => {
   return (
-    <div className="mt-4 w-3/4 mx-auto">
+    <div className="mt-4 w-11/12 mx-auto">
       <h5>Rating Summary</h5>
       <ul>
         {Object.entries(ratingSummary).map(([stars, count]) => (
           <li key={stars} className="flex items-center mb-2">
             <span className="w-12 flex items-center">
+              {stars}
               <FontAwesomeIcon
                 icon={faStar}
                 className={count > 0 ? "text-gold mr-1" : "text-gray-400 mr-1"}
               />
-              {stars}
             </span>
             <div className="flex-1 mx-2">
               <div className="relative pt-1">
@@ -39,8 +39,8 @@ const RatingSummary = ({ reviews = [], ratingSummary, totalReviews }) => {
             <div key={review.review_id} className="mb-4">
               <StarRatingReadOnly rating={review.rating} />
               <p>{review.review}</p>
-              <p className="text-gray-600 text-sm">{review.user_names}</p>
-              <p className="text-gray-500 text-xs">
+              <p className="text-gray-600 text-lg">{review.user_names}</p>
+              <p className="text-gray-500 text-lg">
                 {review.created_at
                   ? format(parseISO(review.created_at), "dd/MM/yyyy")
                   : "No date available"}
