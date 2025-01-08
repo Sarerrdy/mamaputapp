@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useFetchData, useUpdateData } from "../../hooks/useApi";
 import { useAuth } from "../../contexts/AuthContext";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const MenuEdit = () => {
@@ -107,7 +106,6 @@ const MenuEdit = () => {
 
   return (
     <div className="container mx-auto py-6">
-      <ToastContainer />
       <h1 className="text-2xl font-semibold mb-4">Edit Menu Item</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">

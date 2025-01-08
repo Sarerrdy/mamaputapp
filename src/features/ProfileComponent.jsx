@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import AddNewAddress from "../ui/AddNewAddress";
 import { useUpdateData, useCreateData, useDeleteData } from "../hooks/useApi";
 import { useAuth } from "../contexts/AuthContext";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
 
@@ -205,7 +204,6 @@ const ProfileComponent = ({ user, address, stateAndLga }) => {
 
   return (
     <div className="container mx-auto lg:w-3/4 p-6 bg-gray-100 rounded-lg shadow-lg">
-      <ToastContainer />
       <div className="mx-auto bg-white shadow-md rounded-lg overflow-hidden">
         <div className="flex flex-col items-center p-8 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-xl rounded-lg">
           <h1 className="mt-4 text-4xl font-bold tracking-wide">
@@ -213,7 +211,9 @@ const ProfileComponent = ({ user, address, stateAndLga }) => {
           </h1>
           <p className="text-xl font-light">User ID: {user.user_id}</p>
           <p className="text-xl font-light">Email: {user.email}</p>
-          <p className="text-xl font-light">Role: {auth.role}</p>
+          <p className="text-xl font-light">
+            Role: {Array.isArray(auth.role) ? auth.role.join(", ") : auth.role}
+          </p>
           <p className="text-xl font-light">Gender: {user.gender}</p>
           <p className="text-xl font-light">Joined on {user.join_date}</p>
           {isChangingPassword ? (

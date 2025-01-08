@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useFetchData, useUpdateData } from "../../hooks/useApi";
 import { useAuth } from "../../contexts/AuthContext";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const CategoryEdit = () => {
@@ -97,7 +96,6 @@ const CategoryEdit = () => {
 
   return (
     <div className="container mx-auto py-6">
-      <ToastContainer />
       <h1 className="text-2xl font-semibold mb-4">Edit Category</h1>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="mb-4">

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import statesAndLGAs from "../data/stateLGAList";
 import { useCreateData } from "../hooks/useApi";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -72,7 +71,6 @@ const RegistrationForm = () => {
 
   return (
     <div className="max-w-5xl text-2xl mx-auto bg-white p-8 border border-gray-300 rounded-lg shadow-lg">
-      <ToastContainer />
       <h2 className="text-2xl font-bold mb-6 text-center">User Registration</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>

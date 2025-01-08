@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useFetchData, useUpdateDataWithoutId } from "../../hooks/useApi";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
-import { ToastContainer } from "react-toastify";
 import SearchBox from "../../ui/SearchBox";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -200,7 +199,6 @@ const RoleManagement = () => {
           ))}
         </div>
       )}
-      <ToastContainer />
     </div>
   );
 };

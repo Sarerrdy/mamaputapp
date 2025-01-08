@@ -1,7 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useDeleteData } from "../../hooks/useApi";
 import { useAuth } from "../../contexts/AuthContext";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const CategoryDelete = () => {
@@ -26,7 +25,6 @@ const CategoryDelete = () => {
 
   return (
     <div className="container mx-auto py-6">
-      <ToastContainer />
       <h1 className="text-2xl font-semibold mb-4">Delete Category</h1>
       <p>Are you sure you want to delete this category?</p>
       <button

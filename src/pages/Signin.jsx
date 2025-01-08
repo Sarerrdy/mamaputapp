@@ -3,7 +3,6 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useCreateData } from "../hooks/useApi";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { NavLink } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
@@ -11,7 +10,6 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  //try token authentication first
   const auth = useAuth();
   const {
     register,
@@ -31,7 +29,7 @@ const LoginForm = () => {
         {
           onSuccess(data) {
             auth.notifyOrderSuccessful(
-              `Signin of ${data["email"]} was sucessful`
+              `Signin of ${data["email"]} was successful`
             );
             initializer(data);
           },
@@ -62,8 +60,6 @@ const LoginForm = () => {
 
         auth.setIsAuthenticated(true);
 
-        console.log("ReURL", auth.returnUrl);
-        console.log("IsAdmin", auth.isAdmin);
         if (auth.returnUrl && auth.returnUrl !== "/") navigate(auth.returnUrl);
         else navigate("/");
       }
@@ -72,10 +68,8 @@ const LoginForm = () => {
     }
   };
 
-  //toggle show password
   const toggleShowPassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
-    // setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
   useEffect(() => {
@@ -83,15 +77,14 @@ const LoginForm = () => {
   }, []);
 
   return (
-    <div className="container py-5 min-vh-100 bg-body-secondary rounded-lg shadow-md">
-      <ToastContainer />
-      <div className="max-w-5xl text-2xl mx-auto bg-white p-8 border border-gray-300 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center">Login</h2>
+    <div className="flex w-full items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-1/4 p-8 space-y-8 bg-white rounded-lg shadow-md">
+        <h2 className="text-3xl font-bold text-center text-gray-900">Login</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label
               htmlFor="username"
-              className="block font-medium text-gray-700"
+              className="block text-xl font-medium text-gray-700"
             >
               Email:
             </label>
@@ -112,11 +105,10 @@ const LoginForm = () => {
           <div className="flex flex-col">
             <label
               htmlFor="password"
-              className="block font-medium text-gray-700"
+              className="block text-xl font-medium text-gray-700"
             >
               Password:
             </label>
-            {/* <div className="relative w-full"> */}
             <div
               className="relative w-full"
               onFocus={() => setIsFocused(true)}
@@ -137,19 +129,26 @@ const LoginForm = () => {
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                   {showPassword ? (
                     <EyeSlashIcon
-                      className="h-8 w-8 text-gray-500 cursor-pointer"
+                      className="h-6 w-6 text-gray-500 cursor-pointer"
                       onClick={toggleShowPassword}
                     />
                   ) : (
                     <EyeIcon
-                      className="h-8 w-8 text-gray-500 cursor-pointer"
+                      className="h-6 w-6 text-gray-500 cursor-pointer"
                       onClick={toggleShowPassword}
                     />
                   )}
                 </div>
               )}
             </div>
-            {/* </div> */}
+            <div className="mt-2 text-right">
+              <NavLink
+                to="/forgot-password"
+                className="text-xl text-indigo-600 hover:text-indigo-500"
+              >
+                Forgot your password?
+              </NavLink>
+            </div>
           </div>
 
           <div>
@@ -161,10 +160,12 @@ const LoginForm = () => {
             </button>
           </div>
           <hr />
-          <div className="flex flex-col sm:flex-row">
-            <span className="mr-12"> Don't own an account yet?</span>
+          <div className="flex flex-col sm:flex-row items-center justify-between">
+            <span className="text-xl text-gray-600">
+              Don't own an account yet?
+            </span>
             <NavLink
-              className=" px-4 py-2 font-medium text-center text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="mt-2 sm:mt-0 text-xl text-indigo-600 hover:text-indigo-500"
               to="/register"
             >
               Register new account

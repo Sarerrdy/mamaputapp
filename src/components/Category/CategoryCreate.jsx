@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCreateData } from "../../hooks/useApi";
 import { useAuth } from "../../contexts/AuthContext";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const CategoryCreate = () => {
@@ -83,7 +82,6 @@ const CategoryCreate = () => {
 
   return (
     <div className="container mx-auto py-6">
-      <ToastContainer />
       <h1 className="text-2xl font-semibold mb-4">Create New Category</h1>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="mb-4">

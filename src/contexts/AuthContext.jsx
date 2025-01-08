@@ -13,10 +13,6 @@ export const AuthProvider = ({ children }) => {
   const [role, setRole] = useState(
     JSON.parse(localStorage.getItem("site_role")) || []
   );
-
-  // const [role, setRole] = useState(localStorage.getItem("site_role") || []);
-
-  // const [role, setRole] = useState(localStorage.getItem("site_role") || "");
   const [address, setAddresses] = useState(
     localStorage.getItem("site_address") || ""
   );
@@ -25,9 +21,6 @@ export const AuthProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("site_isAdmin")) || false
   );
   const [returnUrl, setReturnUrl] = useState("/");
-  // const [returnUrl, setReturnUrl] = useState(
-  //   localStorage.getItem("site_returUrl") || "/"
-  // );
 
   const navigate = useNavigate();
 
@@ -38,7 +31,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("site_user");
     localStorage.removeItem("site_role");
     localStorage.removeItem("site_address");
-    // localStorage.removeItem("site_returUrl");
     localStorage.removeItem("site_isAdmin");
     setIsAuthenticated(false);
     navigate("/signin");

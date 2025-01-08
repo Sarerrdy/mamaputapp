@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 // import PropTypes from "prop-types";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { CartContext } from "../contexts/CartContext";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useFetchData } from "../hooks/useApi";
 import { useAuth } from "../contexts/AuthContext";
@@ -35,7 +34,6 @@ const Cart = (showModal) => {
     showModal && (
       <div className="container mx-auto max-w-screen-lg">
         <div className="flex flex-col items-center inset-0 left-1/4 bg-white gap-8 p-10 text-black font-normal uppercase shadow-lg rounded-lg">
-          <ToastContainer />
           <h1 className="text-3xl font-bold mb-6">Cart</h1>
           <div className="flex flex-col gap-6 w-full">
             {cartItems.map((item) => (

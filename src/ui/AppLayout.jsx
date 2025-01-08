@@ -96,7 +96,9 @@ function AppLayout() {
         <Outlet />
       </div>
       <div className="container text-white align-bottom mt-4 pb-5">
-        <p className="place-content-end">© 2024 Sarerrdy. All rights reserved</p>
+        <p className="place-content-end">
+          © {new Date().getFullYear()} Sarerrdy. All rights reserved
+        </p>
       </div>
     </div>
   );

@@ -8,7 +8,6 @@ import { CartContext } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
 import { useCreateData } from "../hooks/useApi";
 import { OrderCtx } from "../contexts/OrderContext";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useFetchData } from "../hooks/useApi";
 import apiClient from "../services/apiClient";
@@ -256,7 +255,6 @@ export default function Order() {
 
   return (
     <div className="container mx-auto max-w-screen-lg">
-      <ToastContainer />
       <div className="container mx-auto p-6 bg-gray-100  rounded-lg shadow-lg">
         <div className="bg-white overflow-x-auto  p-6 rounded-lg shadow-md mb-6">
           <div className="text-3xl font-bold mb-4">Order Summary</div>

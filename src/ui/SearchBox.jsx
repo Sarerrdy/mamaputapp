@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import DOMPurify from "dompurify";
 import validator from "validator";
 import { useAuth } from "../contexts/AuthContext"; // Import useAuth
-import { ToastContainer } from "react-toastify"; // Import ToastContainer
 import "react-toastify/dist/ReactToastify.css";
 
 const SearchBox = ({ onSearchResults, users, menus }) => {
@@ -101,7 +100,7 @@ const SearchBox = ({ onSearchResults, users, menus }) => {
       >
         &#x2715;
       </button>
-      <ToastContainer /> {/* Add ToastContainer */}
+
       {/* {searchQuery.trim() !== "" && (
         <ul>
           {searchResults.map((result, index) => (

@@ -11,9 +11,9 @@ export const useFetchData = (endpoint) => {
       console.log("useFetchApi-Data: ", data);
       return data;
     },
-    // staleTime: 1 * 60 * 1000, // 5 minutes
-    // cacheTime: 1 * 60 * 1000, // 10 minutes
-    // refetchOnWindowFocus: false, // Disable refetch on window focus
+    staleTime: 1 * 60 * 1000, // 5 minutes
+    cacheTime: 1 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false, // Disable refetch on window focus
   });
 };
 

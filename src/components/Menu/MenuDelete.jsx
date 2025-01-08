@@ -1,7 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useDeleteData } from "../../hooks/useApi";
 import { useAuth } from "../../contexts/AuthContext";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const MenuDelete = () => {
@@ -26,7 +25,6 @@ const MenuDelete = () => {
 
   return (
     <div className="container mx-auto py-6">
-      <ToastContainer />
       <h1 className="text-2xl font-semibold mb-4">Delete Menu Item</h1>
       <p>Are you sure you want to delete this menu item?</p>
       <button

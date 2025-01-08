@@ -2,7 +2,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { OrderCtx } from "../contexts/OrderContext";
-import { ToastContainer } from "react-toastify";
 // import PropTypes from "prop-types";
 
 const PaymentForm = () => {
@@ -56,7 +55,6 @@ const PaymentForm = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <ToastContainer />
       <div className="text-5xl font-bold mb-10">Pay using Paystack</div>
       <form
         onSubmit={handleSubmit}

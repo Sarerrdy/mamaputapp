@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
+
 import { useAuth } from "../contexts/AuthContext";
 import { Spinner } from "react-bootstrap";
 import { useCreateData } from "../hooks/useApi";
@@ -92,7 +92,6 @@ const AdminRoute = () => {
 
   return (
     <>
-      <ToastContainer />
       {isLoading ? (
         <div className="flex flex-row text-white justify-center h-screen p-24">
           <div className="flex-row">
