@@ -94,12 +94,12 @@ const SearchBox = ({ onSearchResults, users, menus }) => {
           hasNoResults ? "border-red-500" : "border-gray-300"
         } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
       />
-      <button
+      {/* <button
         className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
         onClick={() => setSearchQuery("")}
       >
         &#x2715;
-      </button>
+      </button> */}
 
       {/* {searchQuery.trim() !== "" && (
         <ul>

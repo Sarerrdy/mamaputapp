@@ -32,7 +32,6 @@ export default function Order() {
   const [disable, setDisable] = useState(false); // make an order button state
 
   // auth.setReturnUrl("/"); // return home after completing order
-
   const { setOrderPlacedId } = OrderCtx(); //order id use to view fetch order details
 
   const { data: verifyToken } = useFetchData(
@@ -180,7 +179,6 @@ export default function Order() {
   };
 
   //post a new order
-  //post a new order
   const PostNewOrder = async (newOrder) => {
     setIsLoading(true);
     try {
@@ -204,7 +202,7 @@ export default function Order() {
               auth.notifyOrderSuccessful(
                 `order was successfully placed with order number #${data}`
               );
-              setDisable(true);
+              // setDisable(true);
               setOrderPlacedId(data);
               setOrderToken("");
               localStorage.removeItem("order_token");

@@ -25,8 +25,8 @@ const MenuList = ({
 
   if (isLoading) {
     return (
-      <div className="flex justify-center H-screen p-24">
-        <Spinner className="w-24 h-24" />
+      <div className="flex-col items-center justify-center H-screen p-24">
+        <Spinner className="w-24 h-24 mx-4" />
       </div>
     );
   }
