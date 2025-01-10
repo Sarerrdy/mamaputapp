@@ -207,14 +207,13 @@ const RegistrationForm = () => {
                   validate: (value) =>
                     value.trim() !== "" || "Password cannot be empty",
                   minLength: {
-                    value: 8,
-                    message: "Password must be at least 8 characters long",
+                    value: 6,
+                    message: "Password must be at least 6 characters long",
                   },
                   pattern: {
-                    value:
-                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/,
                     message:
-                      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+                      "Password must contain at least one uppercase letter, one lowercase letter, and one number",
                   },
                 })}
                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
