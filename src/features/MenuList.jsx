@@ -38,8 +38,8 @@ const MenuList = ({
   return (
     <div className="container">
       <div className="flex justify-between items-center px-20">
-        <h1 className="text-2xl uppercase font-bold mt-10 text-center mb-10">
-          Shop
+        <h1 className="text-2xl font-bold mt-10 text-center mb-10">
+          Shop here
         </h1>
         <nav className="navbar navbar-light badge">
           <NavLink className="badge text-lg text-dark" to="/shoppingcart">

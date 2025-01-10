@@ -1,4 +1,6 @@
 import { useContext, useState, useEffect, useCallback } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
@@ -37,8 +39,7 @@ export default function Order() {
     `orders?checkerToken=${orderToken}`
   ); //verify token to manage order state
 
-  const { mutateAsync: CreateAnOrderAsync, isLoading } =
-    useCreateData("orders"); // create order hook
+  const { mutateAsync: CreateAnOrderAsync } = useCreateData("orders"); // create order hook
 
   const [loadIdentifier, setLoadIdentifier] = useState(0); //use to track page reload
 
@@ -50,7 +51,7 @@ export default function Order() {
 
   //address states
   const [isChangingAddress, setIsChangingAddress] = useState(false);
-  const [addressesArr] = useState(auth.addresses); // fetch list of user addresses from context
+  const [addressesArr] = useState(auth.address); // fetch list of user addresses from context
   const [addressId, setAddressId] = useState(0); // use to track new or existing address
   const [savedAddress, setSavedAddress] = useState(""); // manage newly generated address
   const [rawNewAddressData, setRawNewAddressData] = useState(""); // use to re-assign selected shipping address
@@ -71,6 +72,7 @@ export default function Order() {
   const [shippedDate, setShippedDate] = useState("");
   const [expectedDeliveryDate, setExpectedDeliveryDate] = useState("");
   const [shippingCost, setShippingCost] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   //hides and unhides addNewAddress componet
   const handleChangeAddressClick = () => {
@@ -178,44 +180,54 @@ export default function Order() {
   };
 
   //post a new order
+  //post a new order
   const PostNewOrder = async (newOrder) => {
-    await CreateAnOrderAsync(
-      { orders: newOrder },
-      {
-        onSuccess: (data) => {
-          console.log("PAYSTACK: ", data);
-          if (data.reference) {
-            // Navigate to PaymentForm
-            setOrderToken("");
-            navigate("/payment", {
-              state: {
-                email: auth.user.email,
-                amount: data.amount,
-                reference: data.reference,
-                order_id: data.order_id,
-              },
-            });
-          } else {
-            auth.notifyOrderSuccessful(
-              `order was successfully placed with order number #${data}`
+    setIsLoading(true);
+    try {
+      await CreateAnOrderAsync(
+        { orders: newOrder },
+        {
+          onSuccess: (data) => {
+            console.log("PAYSTACK: ", data);
+            if (data.reference) {
+              // Navigate to PaymentForm
+              setOrderToken("");
+              navigate("/payment", {
+                state: {
+                  email: auth.user.email,
+                  amount: data.amount,
+                  reference: data.reference,
+                  order_id: data.order_id,
+                },
+              });
+            } else {
+              auth.notifyOrderSuccessful(
+                `order was successfully placed with order number #${data}`
+              );
+              setDisable(true);
+              setOrderPlacedId(data);
+              setOrderToken("");
+              localStorage.removeItem("order_token");
+              localStorage.removeItem("cartItems");
+              setTimeout(() => {
+                navigate("/OrderSummary");
+              }, 1000); // 1000 milliseconds = 1 seconds
+            }
+          },
+          onError: (error) => {
+            auth.notifyOrderFailure(
+              `order failed with the following error: ${error}`
             );
-            setDisable(true);
-            setOrderPlacedId(data);
-            setOrderToken("");
-            localStorage.removeItem("order_token");
-            localStorage.removeItem("cartItems");
-            setTimeout(() => {
-              navigate("/OrderSummary");
-            }, 1000); // 1000 milliseconds = 1 seconds
-          }
-        },
-        onError: (error) => {
-          auth.notifyOrderFailure(
-            `order failed with the following error: ${error}`
-          );
-        },
-      }
-    );
+          },
+        }
+      );
+    } catch (error) {
+      auth.notifyOrderFailure(
+        `order failed with the following error: ${error}`
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // fetch and handle token to track an order session
@@ -420,7 +432,7 @@ export default function Order() {
             disabled={disable}
             onClick={handleChangeAddressClick}
           >
-            {isChangingAddress ? "Cancel" : "Change Address"}
+            {isChangingAddress ? "Cancel" : "Add New Address"}
           </button>
           {isChangingAddress && (
             <AddNewAddress
@@ -452,7 +464,7 @@ export default function Order() {
               </span>
             </label>
           </div>
-
+          <br />
           <div>
             <label
               htmlFor="payondelivery"
@@ -487,10 +499,13 @@ export default function Order() {
                 onChange={handleShippingOptionChange}
                 className="form-radio11 h-5 w-5 text-green-600"
               />
-              <span className="ml-2 text-gray-700">Pickup</span>
+              <span className="ml-2 text-gray-700">
+                Pickup
+                <p className="text-lg">(₦ {0} - Delivery within 15 minutes)</p>
+              </span>
             </label>
           </div>
-
+          <br />
           <div>
             <label
               htmlFor="standard"
@@ -504,10 +519,13 @@ export default function Order() {
                 onChange={handleShippingOptionChange}
                 className="form-radio h-5 w-5 text-green-600"
               />
-              <span className="ml-2 text-gray-700">Standard delivery</span>
+              <span className="ml-2 text-gray-700">
+                Standard delivery
+                <p className="text-lg">(₦ {500} - Delivery within 4 hours)</p>
+              </span>
             </label>
           </div>
-
+          <br />
           <div>
             <label
               htmlFor="express"
@@ -521,7 +539,10 @@ export default function Order() {
                 onChange={handleShippingOptionChange}
                 className="form-radio h-5 w-5 text-green-600"
               />
-              <span className="ml-2 text-gray-700">Express delivery</span>
+              <span className="ml-2 text-gray-700">
+                Express delivery
+                <p className="text-lg">(₦ {700} - Delivery within 2 hours)</p>
+              </span>
             </label>
           </div>
         </div>
@@ -529,7 +550,7 @@ export default function Order() {
         <div className="flex justify-center">
           <button
             className={`px-8 py-2 text-white text-lg font-bold uppercase rounded ${
-              disable
+              isLoading
                 ? "bg-gray-400"
                 : "bg-green-600 hover:bg-green-500 focus:outline-none focus:bg-red-500"
             } m-3 w-1/4`}
@@ -553,10 +574,17 @@ export default function Order() {
                 navigate("/ShoppingCart");
               }
             }}
-            disabled={disable}
+            disabled={isLoading}
           >
             {console.log("isLoading", isLoading)}
-            {isLoading == true ? "processing..." : "proceed"}
+            {isLoading ? (
+              <>
+                <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
+                processing order...
+              </>
+            ) : (
+              "Proceed"
+            )}
           </button>
         </div>
       </div>

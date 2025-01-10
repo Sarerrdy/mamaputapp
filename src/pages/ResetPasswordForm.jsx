@@ -26,24 +26,26 @@ const ResetPasswordForm = () => {
       await resetPassword.mutateAsync(
         { token, new_password: data.password },
         {
-          onSuccess: () => {
-            auth.notifyOrderSuccessful(
-              "Your password has been reset successfully."
-            );
-            setMessage("Your password has been reset successfully.");
+          onSuccess: (response) => {
+            const successMessage =
+              response?.message || "Your password has been reset successfully.";
+            auth.notifyOrderSuccessful(successMessage);
+            setMessage("Go to login and signin now");
           },
           onError: (error) => {
-            auth.notifyOrderFailure("Failed to reset password.");
-            setMessage("Failed to reset password.");
+            const errorMessage =
+              error.response?.data?.message ||
+              error.message ||
+              "Failed to reset password.";
+            auth.notifyOrderFailure(`Error: ${errorMessage}`);
+            setMessage(`Reset password failed. You can try again`);
           },
         }
       );
     } catch (error) {
-      auth.notifyOrderFailure("An error occurred. Please try again.");
-      setMessage("An error occurred. Please try again.");
+      console.error(`An error occurred. Please try again: ${error}`);
     }
   };
-
   const toggleShowPassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
@@ -151,7 +153,7 @@ const ResetPasswordForm = () => {
           </div>
         </form>
         {message && (
-          <p className="mt-4 text-center text-xl text-gray-600">{message}</p>
+          <p className="mt-4 text-center text-xl text-primary">{message}</p>
         )}
         <div className="mt-4 text-center">
           <NavLink

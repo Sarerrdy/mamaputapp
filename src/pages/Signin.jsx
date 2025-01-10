@@ -34,12 +34,18 @@ const LoginForm = () => {
             initializer(data);
           },
           onError: (error) => {
-            auth.notifyOrderFailure(`Sign-in operation failed!!: ${error}`);
+            const errorMessage =
+              error.response?.data?.message ||
+              error.message ||
+              "Sign-in operation failed!!";
+            auth.notifyOrderFailure(
+              `Sign-in operation failed!!: ${errorMessage}`
+            );
           },
         }
       );
     } catch (error) {
-      auth.notifyOrderFailure(`Sign-in operation failed!!: ${error}`);
+      console.error("Unexpected error during sign-in:", error);
     }
   };
 

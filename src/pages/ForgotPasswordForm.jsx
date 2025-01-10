@@ -19,21 +19,25 @@ const ForgotPasswordForm = () => {
       await createPasswordReset.mutateAsync(
         { email: data.email },
         {
-          onSuccess: () => {
-            auth.notifyOrderSuccessful(
-              "Password reset link has been sent to your email."
-            );
-            setMessage("Password reset link has been sent to your email.");
+          onSuccess: (response) => {
+            const successMessage =
+              response?.message ||
+              "Password reset link has been sent to your email.";
+            auth.notifyOrderSuccessful(successMessage);
+            setMessage(successMessage);
           },
           onError: (error) => {
-            auth.notifyOrderFailure("Failed to send password reset link.");
-            setMessage("Failed to send password reset link.");
+            const errorMessage =
+              error.response?.data?.message ||
+              error.message ||
+              "Failed to send password reset link.";
+            auth.notifyOrderFailure(`Error: ${errorMessage}`);
+            setMessage(`Error: ${errorMessage}`);
           },
         }
       );
     } catch (error) {
-      auth.notifyOrderFailure("An error occurred. Please try again.");
-      setMessage("An error occurred. Please try again.");
+      console.error("Unexpected error during password reset:", error);
     }
   };
 

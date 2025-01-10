@@ -12,6 +12,8 @@ function AddNewAddress({ stateAndLga, onSave, initialAddress }) {
   } = useForm();
 
   useEffect(() => {
+    // Load initial address from props or localStorage
+    const savedAddress = JSON.parse(localStorage.getItem("addressForm"));
     if (initialAddress) {
       const [newAddress, landmark, town, lga, state] =
         initialAddress.split(", ");
@@ -20,13 +22,31 @@ function AddNewAddress({ stateAndLga, onSave, initialAddress }) {
       setValue("town", town);
       setValue("state", state);
       setValue("lga", lga);
+    } else if (savedAddress) {
+      setValue("newAddress", savedAddress.newAddress);
+      setValue("landmark", savedAddress.landmark);
+      setValue("town", savedAddress.town);
+      setValue("state", savedAddress.state);
+      setValue("lga", savedAddress.lga);
     }
   }, [initialAddress, setValue]);
 
   const state = watch("state");
 
   const onSubmit = (data) => {
+    localStorage.removeItem("addressForm"); // Clear localStorage on submit
     onSave(data);
+  };
+
+  const handleInputChange = () => {
+    const formData = {
+      newAddress: watch("newAddress"),
+      landmark: watch("landmark"),
+      town: watch("town"),
+      state: watch("state"),
+      lga: watch("lga"),
+    };
+    localStorage.setItem("addressForm", JSON.stringify(formData));
   };
 
   return (
@@ -41,6 +61,7 @@ function AddNewAddress({ stateAndLga, onSave, initialAddress }) {
             type="text"
             {...register("newAddress", { required: "Address is required" })}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            onChange={handleInputChange}
           />
           {errors.newAddress && (
             <span className="text-red-600">{errors.newAddress.message}</span>
@@ -53,6 +74,7 @@ function AddNewAddress({ stateAndLga, onSave, initialAddress }) {
           <select
             {...register("state", { required: "State is required" })}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            onChange={handleInputChange}
           >
             <option value="">Select State</option>
             {Object.keys(stateAndLga).map((state) => (
@@ -73,6 +95,7 @@ function AddNewAddress({ stateAndLga, onSave, initialAddress }) {
             {...register("lga", { required: "LGA is required" })}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
             disabled={!state} // Disable if state is not selected
+            onChange={handleInputChange}
           >
             <option value="">Select LGA</option>
             {state &&
@@ -94,6 +117,7 @@ function AddNewAddress({ stateAndLga, onSave, initialAddress }) {
             type="text"
             {...register("town", { required: "Town is required" })}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            onChange={handleInputChange}
           />
           {errors.town && (
             <span className="text-red-600">{errors.town.message}</span>
@@ -107,6 +131,7 @@ function AddNewAddress({ stateAndLga, onSave, initialAddress }) {
             type="text"
             {...register("landmark")}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            onChange={handleInputChange}
           />
         </div>
         <button

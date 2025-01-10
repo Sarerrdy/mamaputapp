@@ -5,6 +5,8 @@ import { useCreateData } from "../hooks/useApi";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../contexts/AuthContext";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 //state and corresponding LGAs Array
 const stateAndLga = statesAndLGAs;
@@ -15,6 +17,7 @@ const RegistrationForm = () => {
   const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] =
     useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -31,22 +34,32 @@ const RegistrationForm = () => {
   //submit a post request for new registration
   const onSubmit = (data) => {
     const checkLoginStatus = async () => {
+      setLoading(true);
       try {
         const response = await createOrderMutation.mutateAsync({
           user: data,
         });
 
-        if (response == data["email"]) {
-          auth.notifyOrderSuccessful(
-            `Registration of ${response} was successful`
-          );
-          reset();
-          setTimeout(() => {
-            auth.logOut();
-          }, 1000);
-        }
+        const successMessage =
+          response.data?.message ||
+          `Registration of ${data.email} was successful`;
+        auth.notifyOrderSuccessful(successMessage);
+        reset();
+        setTimeout(() => {
+          auth.logOut();
+        }, 1000);
       } catch (error) {
-        auth.notifyOrderFailure(`Registration failed. Error: ${error}`);
+        const errorMessage =
+          error.response?.data.errors ||
+          error.response?.data.message ||
+          error.message ||
+          "Registration failed. Please try again.";
+
+        auth.notifyOrderFailure(
+          `Registration Error: ${JSON.stringify(errorMessage)}`
+        );
+      } finally {
+        setLoading(false);
       }
     };
     checkLoginStatus();
@@ -79,11 +92,17 @@ const RegistrationForm = () => {
               Title
             </label>
             <input
-              {...register("title", { required: true })}
+              {...register("title", {
+                required: "Title is required",
+                validate: (value) =>
+                  value.trim() !== "" || "Title cannot be empty",
+              })}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
             />
             {errors.title && (
-              <p className="text-red-500 text-base mt-1">Title is required</p>
+              <p className="text-red-500 text-base mt-1">
+                {errors.title.message}
+              </p>
             )}
           </div>
           <div>
@@ -91,12 +110,16 @@ const RegistrationForm = () => {
               First Name
             </label>
             <input
-              {...register("first_name", { required: true })}
+              {...register("first_name", {
+                required: "First name is required",
+                validate: (value) =>
+                  value.trim() !== "" || "First name cannot be empty",
+              })}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
             />
             {errors.first_name && (
               <p className="text-red-500 text-base mt-1">
-                First name is required
+                {errors.first_name.message}
               </p>
             )}
           </div>
@@ -105,12 +128,16 @@ const RegistrationForm = () => {
               Last Name
             </label>
             <input
-              {...register("last_name", { required: true })}
+              {...register("last_name", {
+                required: "Last name is required",
+                validate: (value) =>
+                  value.trim() !== "" || "Last name cannot be empty",
+              })}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
             />
             {errors.last_name && (
               <p className="text-red-500 text-base mt-1">
-                Last name is required
+                {errors.last_name.message}
               </p>
             )}
           </div>
@@ -119,7 +146,11 @@ const RegistrationForm = () => {
               Gender
             </label>
             <select
-              {...register("gender", { required: true })}
+              {...register("gender", {
+                required: "Gender is required",
+                validate: (value) =>
+                  value.trim() !== "" || "Gender cannot be empty",
+              })}
               className="mt-1 block text-xl w-full p-2 border border-gray-300 rounded-md"
             >
               <option value="">Select Gender</option>
@@ -127,7 +158,9 @@ const RegistrationForm = () => {
               <option value="female">Female</option>
             </select>
             {errors.gender && (
-              <p className="text-red-500 text-base mt-1">Gender is required</p>
+              <p className="text-red-500 text-base mt-1">
+                {errors.gender.message}
+              </p>
             )}
           </div>
           <div>
@@ -136,11 +169,21 @@ const RegistrationForm = () => {
             </label>
             <input
               type="email"
-              {...register("email", { required: true })}
+              {...register("email", {
+                required: "Email is required",
+                validate: (value) =>
+                  value.trim() !== "" || "Email cannot be empty",
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                  message: "Invalid email address",
+                },
+              })}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
             />
             {errors.email && (
-              <p className="text-red-500 text-base mt-1">Email is required</p>
+              <p className="text-red-500 text-base mt-1">
+                {errors.email.message}
+              </p>
             )}
           </div>
 
@@ -159,7 +202,21 @@ const RegistrationForm = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter password"
-                {...register("password", { required: true })}
+                {...register("password", {
+                  required: "Password is required",
+                  validate: (value) =>
+                    value.trim() !== "" || "Password cannot be empty",
+                  minLength: {
+                    value: 8,
+                    message: "Password must be at least 8 characters long",
+                  },
+                  pattern: {
+                    value:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    message:
+                      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+                  },
+                })}
                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
               />
               {isPasswordFocused && (
@@ -181,7 +238,7 @@ const RegistrationForm = () => {
 
             {errors.password && (
               <p className="text-red-500 text-base mt-1">
-                Password is required
+                {errors.password.message}
               </p>
             )}
           </div>
@@ -202,8 +259,12 @@ const RegistrationForm = () => {
                 placeholder="Confirm Password"
                 {...register("confirmPassword", {
                   required: "Confirm Password is required",
-                  validate: (value) =>
-                    value === password || "Passwords do not match",
+                  validate: {
+                    notEmpty: (value) =>
+                      value.trim() !== "" || "Confirm Password cannot be empty",
+                    matchesPassword: (value) =>
+                      value === password || "Passwords do not match",
+                  },
                 })}
                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
               />
@@ -234,13 +295,21 @@ const RegistrationForm = () => {
               Phone
             </label>
             <input
-              type="number"
-              {...register("phone", { required: true })}
+              type="tel"
+              {...register("phone", {
+                required: "Phone number is required",
+                validate: (value) =>
+                  value.trim() !== "" || "Phone number cannot be empty",
+                pattern: {
+                  value: /^[0-9]{10,15}$/,
+                  message: "Invalid phone number",
+                },
+              })}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
             />
             {errors.phone && (
               <p className="text-red-500 text-base mt-1">
-                Phone number is required
+                {errors.phone.message}
               </p>
             )}
           </div>
@@ -251,7 +320,11 @@ const RegistrationForm = () => {
               State
             </label>
             <select
-              {...register("state", { required: true })}
+              {...register("state", {
+                required: "State is required",
+                validate: (value) =>
+                  value.trim() !== "" || "State cannot be empty",
+              })}
               className="mt-1 block text-xl w-full p-2 border border-gray-300 rounded-md"
               onChange={handleStateChange}
             >
@@ -263,7 +336,9 @@ const RegistrationForm = () => {
               ))}
             </select>
             {errors.state && (
-              <p className="text-red-500 text-base mt-1">State is required</p>
+              <p className="text-red-500 text-base mt-1">
+                {errors.state.message}
+              </p>
             )}
           </div>
           <div>
@@ -271,7 +346,11 @@ const RegistrationForm = () => {
               LGA
             </label>
             <select
-              {...register("lga", { required: true })}
+              {...register("lga", {
+                required: "LGA is required",
+                validate: (value) =>
+                  value.trim() !== "" || "LGA cannot be empty",
+              })}
               className="mt-1 block text-xl w-full p-2 border border-gray-300 rounded-md"
             >
               <option value="">Select LGA</option>
@@ -283,7 +362,9 @@ const RegistrationForm = () => {
                 ))}
             </select>
             {errors.lga && (
-              <p className="text-red-500 text-base mt-1">LGA is required</p>
+              <p className="text-red-500 text-base mt-1">
+                {errors.lga.message}
+              </p>
             )}
           </div>
           <div>
@@ -291,11 +372,17 @@ const RegistrationForm = () => {
               Address
             </label>
             <input
-              {...register("address", { required: true })}
+              {...register("address", {
+                required: "Address is required",
+                validate: (value) =>
+                  value.trim() !== "" || "Address cannot be empty",
+              })}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
             />
             {errors.address && (
-              <p className="text-red-500 text-base mt-1">Address is required</p>
+              <p className="text-red-500 text-base mt-1">
+                {errors.address.message}
+              </p>
             )}
           </div>
           <div>
@@ -303,11 +390,17 @@ const RegistrationForm = () => {
               Town
             </label>
             <input
-              {...register("town", { required: true })}
+              {...register("town", {
+                required: "Town is required",
+                validate: (value) =>
+                  value.trim() !== "" || "Town cannot be empty",
+              })}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
             />
             {errors.town && (
-              <p className="text-red-500 text-base mt-1">Town is required</p>
+              <p className="text-red-500 text-base mt-1">
+                {errors.town.message}
+              </p>
             )}
           </div>
           <div>
@@ -322,8 +415,16 @@ const RegistrationForm = () => {
           <button
             type="submit"
             className="w-full bg-blue-500 text-white p-2 rounded-md mt-4 hover:bg-blue-600 text-xl"
+            disabled={loading}
           >
-            Register
+            {loading ? (
+              <>
+                <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
+                Registering...
+              </>
+            ) : (
+              "Register"
+            )}
           </button>
         </form>
       </div>

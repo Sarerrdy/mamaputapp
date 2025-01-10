@@ -1,8 +1,6 @@
-// import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { OrderCtx } from "../contexts/OrderContext";
-// import PropTypes from "prop-types";
 
 const PaymentForm = () => {
   const location = useLocation();
@@ -13,7 +11,6 @@ const PaymentForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const { email, amount, reference } = paymentDetails;
     const paystackHandler = window.PaystackPop.setup({
       key: "pk_test_9aa60ea87de363aa2e0f1d01bc852f0bdb360f19",
       email,
@@ -23,19 +20,18 @@ const PaymentForm = () => {
         if (response.status === "success") {
           auth.notifyOrderSuccessful(`Payment received for order #${order_id}`);
           setOrderPlacedId(order_id);
-          //   setOrderToken("");
           localStorage.removeItem("order_token");
           localStorage.removeItem("cartItems");
           setTimeout(() => {
             navigate("/OrderSummary");
-          }, 1000); //
+          }, 1000);
         } else {
           auth.notifyOrderFailure(
-            "Payment verification failed! Please check your order history before place another order"
+            "Payment verification failed! Please check your order history before placing another order"
           );
           setTimeout(() => {
             navigate("/");
-          }, 1000); //
+          }, 1000);
         }
       },
       onClose: () => {
@@ -46,19 +42,20 @@ const PaymentForm = () => {
   };
 
   const handleCancel = () => {
-    // window.PaystackPop.closeIframe();
     auth.notifyOrderFailure("Payment cancelled");
     setTimeout(() => {
-      navigate("/");
-    }, 2000); //
+      navigate("/checkout");
+    }, 2000);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="text-5xl font-bold mb-10">Pay using Paystack</div>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+      <div className="text-3xl md:text-5xl font-bold mb-10 text-center">
+        Pay using Paystack
+      </div>
       <form
         onSubmit={handleSubmit}
-        className="w-25 bg-white p-8 rounded-lg shadow-md space-y-4"
+        className="w-full max-w-md bg-white p-8 rounded-lg shadow-md space-y-4"
       >
         <label className="block">
           <span className="text-gray-700">Email:</span>
@@ -66,10 +63,9 @@ const PaymentForm = () => {
             type="email"
             name="email"
             value={email}
-            // onChange={handleChange}
             required
             readOnly
-            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 "
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </label>
         <label className="block">
@@ -78,7 +74,6 @@ const PaymentForm = () => {
             type="number"
             name="amount"
             value={amount}
-            // onChange={handleChange}
             required
             readOnly
             className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
@@ -101,11 +96,5 @@ const PaymentForm = () => {
     </div>
   );
 };
-
-// PaymentForm.propTypes = {
-//   email: PropTypes.string.isRequired,
-//   amount: PropTypes.number.isRequired,
-//   reference: PropTypes.string.isRequired,
-// };
 
 export default PaymentForm;
